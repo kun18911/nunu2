@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bệnh Viện Quỷ Dữ</title>
+  
+    <style>
+        /* Định dạng cho thẻ div "body" */
+        #body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: lightgray;
+            overflow: hidden;
+            position: relative;
+        }
+    
+        /* Định dạng cho thẻ div "screen" */
+        #screen {
+            position: relative; background-color: white;border: 2px solid #000
+        }
+        
+        /* Định dạng cho bảng */
+        #board {
+            left: 50%;
+            transform: translateX(-50%);
+            top: 0px;
+            position: absolute;
+            background-color: lightblue;
+            border: 1px solid black;
+        }
+
+
+
+
+        .map {
+            position: absolute;
+            border: 2px solid black;
+        }
+        .deChar {
+            position: absolute;
+            width: 40px;
+            height: 20px;
+            background-color: green;
+            border: 1px solid black;
+        }
+
+        .khungChar {
+            position: absolute;
+            width: 40px;
+            height: 50px;
+            border: 1px solid black;
+            background-color: transparent;
+            bottom: 10px; /* Đặt khungChar cao hơn đếchar 10px */
+            left: 0; /* Đặt khungChar căn giữa theo chiều ngang */
+        }
+        .screNBorder {
+            border: 1px solid black;
+            background-color: transparent;
+            pointer-events: none;
+        }
+
+        
+    </style>
+    <style>
+        /* Định dạng cho thẻ cha move-btn */
+        .move-btn {
+    width: 51%;
+    height: 17%;
+    /* background-color: #10a17691; */
+    position: absolute;
+    padding: 10px;
+    background-color: transparent;
+    bottom: 8%;
+    left: 50%;
+    border-radius: 0.5rem;
+    transform: translateX(-50%);
+    border: 2px solid #000;
+    box-sizing: border-box;
+    pointer-events: none;
+}
+
+/* Định dạng cho các nút con */
+.move-btn button {
+    width: 29%; /* Chiều rộng của nút bằng 20% chiều rộng của thẻ cha */
+    height: 37%; /* Chiều cao của nút bằng 20% chiều cao của thẻ cha */
+    font-size: 60%; /* Kích thước chữ của nút bằng 50% chiều cao của nút */
+    text-align: center; /* Canh giữa chữ trong nút */
+    line-height: 20%; /* Canh giữa chữ theo chiều dọc trong nút */
+    border:  2px solid #000; /* Xóa border mặc định của nút */
+    cursor: pointer; /* Con trỏ chuột khi hover vào nút */
+    color: white; /* Màu chữ */
+    border-radius: 15%;
+    background: linear-gradient(to right, #0b8924de, #941414d9);
+    /* background: linear-gradient(to right, #2546c9, #170a1f); */
+    cursor: pointer;  pointer-events: auto;
+}
+
+/* Định dạng cho nút OK */
+#ok {
+    background: linear-gradient(to right, #2546c9, #170a1f);
+    /* background: linear-gradient(45deg, #4a90e2, #4a90e2); Màu gradient khác cho nút OK */
+}
+
+/* Định dạng cho các góc của các nút */
+#left {
+    position: absolute;
+    bottom: 0%;
+    left: 0%;
+    margin-left: 5px;
+    margin-bottom: 5px;
+   
+}
+
+#up {
+    position: absolute;
+    top: 0%;
+    margin-left: 5px;
+    margin-top: 5px;
+    left: 0%; /* Nút lên nằm giữa chiều ngang của thẻ cha */
+    /* transform: translateX(-50%); Canh giữa nút theo chiều ngang */
+}
+
+#right {
+    position: absolute;
+    bottom: 0%;
+    right: 0%;
+    margin-bottom: 5px;
+    margin-right: 5px;
+    /* transform: translateY(-50%); Canh giữa nút theo chiều dọc */
+}
+
+#down {
+    position: absolute;
+    top: 0%; /* Nút xuống nằm ở cạnh dưới của thẻ cha */
+    right: 0%;
+    margin-right: 5px;
+    margin-top: 5px;
+    /* transform: translateY(-100%); Canh nút xuống ở cạnh dưới */
+}
+
+#ok {
+    position: absolute;
+    /* margin-left: 5px; */
+    /* margin-top: 5px; */
+    top: 50%; /* Nút OK nằm giữa chiều dọc của thẻ cha */
+    left: 50%; /* Nút OK nằm giữa chiều ngang của thẻ cha */
+    transform: translate(-50%, -50%); /* Canh giữa nút OK */
+}
+.miniMapp {position: absolute;
+    width: 44%;
+    height: 14%;
+    top: 15px;
+    right: 15px;
+    background-color: transparent;
+    border: 1px solid #000;}
+.optionBtn {position: absolute;
+    font-size: 87%;
+    text-align: center;
+    border: 2px solid #000;
+    cursor: pointer;
+    color: white;
+    border-radius: 15%;
+    background-image: linear-gradient(to right, #c00505, #000000);
+    cursor: pointer;
+    pointer-events: auto;
+    width: 14.3%;
+    height: 7.5%;
+    bottom: 10%;
+    left: 7%;
+    display: flex;
+    justify-content: center;
+    align-items: center;}
+.miniMapp2 {
+    width: 100%; height: 100%; background-color: transparent;border: 2px solid #000
+}
+
+    </style>
+    <style>
+      .btnToggleMenu {
+    position: absolute;
+    background: #f62d2d;
+    width: 64%;
+    height: 50%;
+    border: 2px solid #000;
+    padding: 7px 3px 7px 7px;
+    overflow-y: auto; /* Hiển thị thanh cuộn dọc nếu cần */
+    overflow-x: hidden; /* Ẩn thanh cuộn ngang */
+    box-sizing: border-box;
+    border-radius: 2%;
+    /* Định dạng thanh cuộn dọc */
+    scrollbar-width: thin; /* Chỉ định thanh cuộn mỏng */
+    scrollbar-color: #00f #f0f0; /* Màu viên cuộn và nền thanh cuộn */
+}
+
+
+.menuChild {
+    border-radius: 5%;
+    width: 100%;
+    height: 19%;
+    margin-bottom: 7px;
+    border: 1px solid #000;
+    text-align: center;
+    line-height: 19px; /* Căn giữa chữ theo chiều dọc */
+    display: flex;
+    align-items: center; /* Căn giữa chữ theo chiều dọc */
+    justify-content: center; /* Căn giữa chữ theo chiều ngang */
+}
+
+.menuChild:last-child {
+    margin-bottom: 0
+}
+
+    </style>
+
+    <!-- hành trang -->
+     <style>
+
+.gear {
+    position: absolute;
+    width: 70%;
+    height: 50%;
+    background-color: #f0f0f0;
+    border: 2px solid #000;
+    box-sizing: border-box;
+    padding: 5px;
+    overflow-y: auto;
+}
+
+.gearName {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+    height: 12%;
+    background-color: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #000;
+    box-sizing: border-box;
+}
+
+.gearGold {
+    background: blue;
+    position: absolute;
+    width: 93%;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-sizing: border-box;
+    padding: 0 5px; /* Padding left and right */
+}
+
+.gearGold .gold,
+.gearGold .diamond {
+    font-size: 13px;
+}
+
+.gearGold .gold .goldValue,
+.gearGold .diamond .diamondValue {
+    font-weight: bold;
+}
+
+
+.gearBox {
+    overflow: auto;
+    width: 92%;
+    height: 66%;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    padding: 5px;
+    box-sizing: border-box;
+    left: 50%;
+    top: 18%;
+    background: red;
+    position: absolute;
+    transform: translateX(-50%);
+    /* scrollbar-width: none; */
+    scrollbar-color: #00f #f0f0;
+}
+
+.box {
+    width: 17.8%; height: 18%;
+    background-color: #ccc;
+    border: 1px solid #000;
+    margin: 1px; /* Khoảng cách giữa các box */
+}
+
+#addBoxBtn {
+    position: absolute;
+    width: 24%;
+    padding: 10px;
+    margin-top: calc(100% - 60px); /* Position button correctly */
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#addBoxBtn:hover {
+    background-color: #0056b3;
+}
+
+
+     </style>
+    <link rel="stylesheet" href="css2/style.css">
+    
+</head>
+<body>
+
+<div id="body">
+    <div id="screen"></div>
+    <!-- <div id="screeNBorder"></div> -->
+    <div id="board"></div>
+    <div class="move-btn">
+        <button id="left">TRÁI</button>
+        <button id="up">LÊN</button>
+        <button id="down">XUỐNG</button>
+        <button id="right">PHẢI</button>
+        <button id="ok">OK</button>
+    </div>
+    <div class="miniMapp"><div class="miniMapp2"></div></div>
+    <div class="optionBtn">Tùy Chọn</div>
+   <a class="btnToggleMenu">
+        <div class="menuChild">Hành trang</div>
+        <div class="menuChild">Kĩ năng</div>
+        <div class="menuChild">Tiềm năng</div>
+        <div class="menuChild">Bản thân</div>
+        <div class="menuChild">Bản đồ</div>
+    </a> 
+
+    <!--<div class="gear">
+        <div class="gearName">Hành Trang</div>
+        <div class="gearGold">
+            <div class="gold">
+                Vàng: <span class="goldValue">0</span>
+            </div>
+            <div class="diamond">
+                Kim cương: <span class="diamondValue">0</span>
+            </div>
+        </div>
+        <div class="gearBox">
+             10 box con ban đầu -->
+           <!-- <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <button id="addBoxBtn">Thêm Box</button>
+        </div>
+    </div> -->
+  
+<style>
+    /* Skill board tổng */
+    .skillBoard {
+        position: absolute;
+        width: 70%;
+        height: 60%;
+        margin: 0 auto;
+        border: 2px solid #000;
+        padding: 10px;
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+    /* Tiêu đề kỹ năng */
+    .skillName {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    /* Skill box chứa các ngôi sao và kỹ năng */
+    .skillBox {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        margin: 0 auto;
+    }
+
+    /* SVG vẽ ngôi sao */
+    svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    /* Định dạng mỗi skill box */
+    .skill-box {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border: 2px solid black;
+        border-radius: 10px;
+    }
+
+    /* Box chứa hình ảnh kỹ năng */
+    .skillPic {
+        width: 100%;
+        height: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid black;
+    }
+
+    /* Box chứa text kỹ năng */
+    .skill-text {
+        text-align: center;
+        font-size: 14px;
+    }
+</style>
+
+    
+
+</div>
+</body>
+<script>
+//     document.getElementById('addBoxBtn').addEventListener('click', () => {
+// const gearBox = document.querySelector('.gearBox');
+// const newBox = document.createElement('div');
+// newBox.classList.add('box');
+// gearBox.appendChild(newBox);
+// });
+
+</script>
+<!-- <script src="js/Chesss/4_khai_báo.js"></script> -->
+<script>
+    // let c = 320
+    // let d = 620
+    // var fifteen = Math.floor(c*4.7/100)
+
+    // let screenn = document.querySelector('.move-btn');
+    // screenn.style.width = ((c - 30) * 60) / 100 + 'px';
+    // screenn.style.height = ((c-30) * 20)/100 + 'px';
+</script>
+ <script>
+    let c = 320// window.innerWidth;
+    let d = 620//window.innerHeight;
+
+    // Áp dụng kích thước cho thẻ "body" và "screen"
+    document.getElementById('body').style.width = c + 'px';
+    document.getElementById('body').style.height = d + 'px';
+
+    let screenn = document.getElementById('screen');
+    screenn.style.width = (c - 30) + 'px';
+    screenn.style.height = (d - 30) + 'px';
+
+    let screeNBorder = document.getElementById('screeNBorder');
+    screeNBorder.style.width = screenn.style.width
+    screeNBorder.style.height = screenn.style.height
+
+    let mapPo = 0; // Biến lưu trữ trạng thái của map hiện tại
+    let charT = 20, charL = 20; // Tọa độ ban đầu của nhân vật
+
+    // Hàm tạo map
+    function cc() {
+        if (mapPo === 0) {mapPo = 1}
+        var a = getMapColor(mapPo)
+        createMap(mapPo, a[0], a[1], a[2]);
+    }
+
+    // Tạo ra map và đế char + khung char
+    function createMap(mapPo, color, width, height) {
+        let screen = document.getElementById('screen');
+        screen.innerHTML = ''; // Xóa nội dung cũ khi chuyển map
+        // tạo map ---------------------
+        let map = document.createElement('div');
+        map.classList.add('map');
+        map.style.backgroundColor = color;
+        map.style.width = `${width}px`; map.style.height = `${height}px`
+
+        // Tạo nhân vật (deChar + khungChar)
+        let deChar = document.createElement('div');
+        deChar.classList.add('deChar');
+        deChar.style.top = charT + 'px';
+        deChar.style.left = charL + 'px';
+
+        let khungChar = document.createElement('div');
+        khungChar.classList.add('khungChar');
+
+        screen.appendChild(map).appendChild(deChar).appendChild(khungChar);
+
+        // Tạo vật thể cố định -------------------
+        createObjects(map, mapPo);
+    }
+
+    // Trả về màu sắc của map dựa trên mapPo
+    function getMapColor(mapPo) {
+        switch (mapPo) {
+            case 1: return ['green', 500, 400];
+            case 2: return ['red', 500, 400];
+            case 3: return ['yellow', 500, 400];
+            case 4: return ['orange', 500, 400];
+            case 5: return ['purple', 500, 400];
+            default: return ['white', 500, 400];
+        }
+    }
+
+    // Hàm tạo các vật thể cố định trong map
+    const mapData = {
+        1: [  
+            { top: 50, left: 50, width: 40, height: 40 },
+            { top: 150, left: 200, width: 60, height: 30 },
+            { top: 300, left: 100, width: 50, height: 50 }
+        ],
+        2: [
+            { top: 100, left: 300, width: 30, height: 30 },
+            { top: 250, left: 150, width: 40, height: 40 },
+            { top: 400, left: 50, width: 70, height: 20 }
+        ],
+        3: [
+            { top: 50, left: 50, width: 40, height: 40 },
+            { top: 150, left: 200, width: 60, height: 30 },
+            { top: 300, left: 100, width: 50, height: 50 }
+        ],
+        4: [
+            { top: 100, left: 300, width: 30, height: 30 },
+            { top: 250, left: 150, width: 40, height: 40 },
+            { top: 400, left: 50, width: 70, height: 20 }
+        ],
+        5: [
+            { top: 50, left: 50, width: 40, height: 40 },
+            { top: 150, left: 200, width: 60, height: 30 },
+            { top: 300, left: 100, width: 50, height: 50 }
+        ],
+        // Thêm dữ liệu cho các map khác nếu có
+    };
+    const mapsEntities = {
+    1: [
+        { name: 'Player1', color: 'blue', level: 10, gold: 100, type: 'player' },
+        { name: 'Monster1', color: 'red', level: 5, gold: 50, type: 'monster' }
+    ],
+    2: [
+        { name: 'Monster2', color: 'green', level: 3, gold: 30, type: 'monster' },
+        { name: 'Monster3', color: 'purple', level: 8, gold: 80, type: 'monster' }
+    ],
+    3: [
+        { name: 'Player2', color: 'yellow', level: 12, gold: 200, type: 'player' },
+        { name: 'Monster4', color: 'black', level: 7, gold: 60, type: 'monster' }
+    ]
+};
+
+
+    function createObjects(map, mapKey) {
+        // Lấy thông tin vật thể từ mapData dựa trên mapKey
+        const objectPositions = mapData[mapKey];
+
+        // Xóa các vật thể cũ nếu có
+        // map.innerHTML = '';
+
+        // Tạo và thêm các vật thể vào map
+        objectPositions.forEach(pos => {
+            let obj = document.createElement('div');
+            obj.classList.add('object');
+            obj.style.top = pos.top + 'px';
+            obj.style.left = pos.left + 'px';
+            obj.style.width = pos.width + 'px';
+            obj.style.height = pos.height + 'px';
+            map.appendChild(obj);
+        });
+
+
+        const entities = mapsEntities[mapKey] || [];
+        entities.forEach(entity => {
+        // Tạo thẻ div cho mỗi thực thể (nhân vật, quái vật)
+        let entityDiv = document.createElement('div');
+        entityDiv.style.width = '50px';
+        entityDiv.style.height = '50px';
+        entityDiv.style.position = 'absolute';
+        entityDiv.style.backgroundColor = entity.color;
+        
+        // Gán thuộc tính cho thực thể
+        entityDiv.textContent = `${entity.name} (Lv: ${entity.level})`;
+        
+
+        // Giả sử 'map' là phần tử cha mà thực thể đang được đặt vào
+let mapWidth = map.offsetWidth;   // Lấy chiều rộng của map
+let mapHeight = map.offsetHeight; // Lấy chiều cao của map
+
+// Đặt vị trí ngẫu nhiên theo px trong map
+entityDiv.style.top = Math.random() * mapHeight * 0.9 + 'px';  // 90% của chiều cao map
+entityDiv.style.left = Math.random() * mapWidth * 0.9 + 'px';  // 90% của chiều rộng map
+
+// entityDiv.style.top = (Math.random() * mapHeight * 0.9 + 50) + 'px';
+        
+        // Thêm thực thể vào map
+        map.appendChild(entityDiv);
+    });
+    }
+
+    // -----------------------------
+
+    // Biến để lưu trữ chuyển động của nhân vật
+    let moveInterval = null;
+
+    // Hàm di chuyển liên tục
+    function moveChar(direction) {
+        clearInterval(moveInterval);
+        moveInterval = setInterval(() => {
+            switch (direction) {
+                case 'left': if (charL > 0) charL -= 5; break;
+                case 'up': if (charT > 0) charT -= 5; break;
+                case 'right': if (charL < 360) charL += 5; break; // 360 = 400px (map width) - 40px (deChar width)
+                case 'down': if (charT < 480) charT += 5; break; // 480 = 500px (map height) - 20px (deChar height)
+            }
+            updateCharPosition();
+            checkCollision();
+        }, 100);
+    }
+
+    // Cập nhật vị trí của nhân vật
+    function updateCharPosition() {
+        let deChar = document.querySelector('.deChar');
+        deChar.style.top = charT + 'px';
+        deChar.style.left = charL + 'px';
+    }
+
+    // Hàm kiểm tra va chạm với vật thể và dừng di chuyển
+    function move(direction) {
+    var tenMove = 10;
+    const deChar = document.getElementById('deChar');
+    const mapWidth = 360;  // Chiều rộng của map (bạn đã giới hạn là 360px)
+    const mapHeight = 450; // Chiều cao của map (bạn đã giới hạn là 450px)
+    const padding = 5;     // Khoảng cách 5px từ các cạnh map
+    const deCharWidth = deChar.offsetWidth;   // Lấy chiều rộng thực tế của nhân vật
+    const deCharHeight = deChar.offsetHeight; // Lấy chiều cao thực tế của nhân vật
+
+    switch (direction) {
+        case 'up':
+            if (charT > padding) charT -= tenMove; // Không vượt quá cạnh trên, dừng lại cách 5px
+            if (charT < padding) charT = padding; // Đảm bảo cách mép trên 5px
+            break;
+        case 'down':
+            if (charT < mapHeight - deCharHeight - padding) charT += tenMove; // Không vượt quá cạnh dưới, cách 5px
+            if (charT > mapHeight - deCharHeight - padding) charT = mapHeight - deCharHeight - padding; // Giới hạn cạnh dưới
+            break;
+        case 'left':
+            if (charL > padding) charL -= tenMove; // Không vượt quá cạnh trái, cách 5px
+            if (charL < padding) charL = padding;  // Giới hạn cạnh trái
+            break;
+        case 'right':
+            if (charL < mapWidth - deCharWidth - padding) charL += tenMove; // Không vượt quá cạnh phải, cách 5px
+            if (charL > mapWidth - deCharWidth - padding) charL = mapWidth - deCharWidth - padding; // Giới hạn cạnh phải
+            break;
+    }
+
+    deChar.style.top = `${charT}px`;
+    deChar.style.left = `${charL}px`;
+}
+
+
+    // Xử lý các nút di chuyển
+    document.getElementById('left').addEventListener('click', () => moveChar('left'));
+    document.getElementById('up').addEventListener('click', () => moveChar('up'));
+    document.getElementById('right').addEventListener('click', () => moveChar('right'));
+    document.getElementById('down').addEventListener('click', () => moveChar('down'));
+
+    // Hàm dừng di chuyển
+    function stopChar() {
+        clearInterval(moveInterval);
+    }
+
+    // Sự kiện để dừng khi click lần thứ hai
+    ['left', 'up', 'right', 'down'].forEach(id => {
+        let btn = document.getElementById(id);
+        btn.addEventListener('dblclick', stopChar);
+    });
+
+    // Khởi tạo map đầu tiên
+    cc();
+</script> 
+
+</html>
+
+<!-- 
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bàn Cờ</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            grid-template-rows: repeat(9, 1fr);
+            gap: 5px;
+            width: 90vw;
+            height: 90vw;
+        }
+
+        .cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3vw;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .color-0 { background-color: red; }
+        .color-1 { background-color: blue; }
+        .color-2 { background-color: green; }
+        .color-3 { background-color: yellow; }
+        .color-4 { background-color: purple; }
+        .color-5 { background-color: orange; }
+
+        .white { background-color: white; }
+
+        button.active {
+            background-color: lightgray;
+        }
+    </style>
+</head>
+<body>
+    <div class="board" id="board"></div>
+    <button id="addCrossButton">Thêm dấu cộng</button>
+    <button id="addArrowRightButton">Thêm dấu mũi tên phải</button>
+    <button id="addArrowUpButton">Thêm dấu mũi tên lên</button>
+    <button id="explodeButton" style="display: none;">Nổ</button>
+    <script>
+        const board = document.getElementById('board');
+        const addCrossButton = document.getElementById('addCrossButton');
+        const addArrowRightButton = document.getElementById('addArrowRightButton');
+        const addArrowUpButton = document.getElementById('addArrowUpButton');
+        const explodeButton = document.getElementById('explodeButton');
+        const colors = ['color-0', 'color-1', 'color-2', 'color-3', 'color-4', 'color-5'];
+
+        let activeButton = null;
+        let selectedCell = null;
+        let explosionMode = false;
+
+        // Tạo bàn cờ 9x9 với màu ngẫu nhiên
+        for (let i = 0; i < 81; i++) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell', colors[Math.floor(Math.random() * colors.length)]);
+            cell.addEventListener('click', handleCellClick);
+            board.appendChild(cell);
+        }
+
+        addCrossButton.addEventListener('click', () => toggleButton(addCrossButton));
+        addArrowRightButton.addEventListener('click', () => toggleButton(addArrowRightButton));
+        addArrowUpButton.addEventListener('click', () => toggleButton(addArrowUpButton));
+        explodeButton.addEventListener('click', () => { explosionMode = true; explodeButton.style.display = 'none'; });
+
+        function toggleButton(button) {
+            if (activeButton === button) {
+                activeButton.classList.remove('active');
+                activeButton = null;
+            } else {
+                if (activeButton) {
+                    activeButton.classList.remove('active');
+                }
+                button.classList.add('active');
+                activeButton = button;
+            }
+        }
+
+        function handleCellClick(event) {
+            const cell = event.target;
+            if (explosionMode) {
+                handleExplosion(cell);
+            } else if (activeButton) {
+                if (activeButton === addCrossButton) {
+                    cell.textContent = '+';
+                } else if (activeButton === addArrowRightButton) {
+                    cell.textContent = '→';
+                } else if (activeButton === addArrowUpButton) {
+                    cell.textContent = '↑';
+                }
+                activeButton.classList.remove('active');
+                activeButton = null;
+                selectedCell = cell;
+                explodeButton.style.display = 'block';
+            }
+        }
+
+        function handleExplosion(cell) {
+            if (cell.textContent === '+' || cell.textContent === '→' || cell.textContent === '↑') {
+                setTimeout(() => {
+                    explodeCell(cell);
+                    explosionMode = false;
+                }, 300);
+            }
+        }
+
+        function explodeCell(cell) {
+            const index = Array.from(board.children).indexOf(cell);
+            const row = Math.floor(index / 9);
+            const col = index % 9;
+            const content = cell.textContent;
+
+            cell.classList.add('white');
+            cell.textContent = '';
+
+            if (content === '+') {
+                const positions = [
+                    { row: row - 1, col: col - 1 },
+                    { row: row - 1, col: col + 1 },
+                    { row: row + 1, col: col - 1 },
+                    { row: row + 1, col: col + 1 }
+                ];
+
+                positions.forEach(pos => {
+                    if (pos.row >= 0 && pos.row < 9 && pos.col >= 0 && pos.col < 9) {
+                        const adjacentIndex = pos.row * 9 + pos.col;
+                        const adjacentCell = board.children[adjacentIndex];
+                        if (!adjacentCell.classList.contains('white')) {
+                            setTimeout(() => explodeCell(adjacentCell), 300);
+                        }
+                    }
+                });
+            } else if (content === '→') {
+                const positions = [
+                    { row: row, col: col - 2 },
+                    { row: row, col: col - 1 },
+                    { row: row, col: col + 1 },
+                    { row: row, col: col + 2 }
+                ];
+
+                positions.forEach(pos => {
+                    if (pos.row >= 0 && pos.row < 9 && pos.col >= 0 && pos.col < 9) {
+                        const adjacentIndex = pos.row * 9 + pos.col;
+                        const adjacentCell = board.children[adjacentIndex];
+                        if (!adjacentCell.classList.contains('white')) {
+                            setTimeout(() => explodeCell(adjacentCell), 300);
+                        }
+                    }
+                });
+            } else if (content === '↑') {
+                const positions = [
+                    { row: row - 2, col: col },
+                    { row: row - 1, col: col },
+                    { row: row + 1, col: col },
+                    { row: row + 2, col: col }
+                ];
+
+                positions.forEach(pos => {
+                    if (pos.row >= 0 && pos.row < 9 && pos.col >= 0 && pos.col < 9) {
+                        const adjacentIndex = pos.row * 9 + pos.col;
+                        const adjacentCell = board.children[adjacentIndex];
+                        if (!adjacentCell.classList.contains('white')) {
+                            setTimeout(() => explodeCell(adjacentCell), 300);
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html> -->

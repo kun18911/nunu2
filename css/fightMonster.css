@@ -1,0 +1,108 @@
+.arrow {
+    position: absolute;
+    top: -20px;
+    display: none;
+    width: 0;
+    height: 0;
+    border-left: 13px solid transparent;
+    border-right: 13px solid transparent;
+    border-top: 20px solid red;
+    animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-7px);
+    }
+}
+
+.arrowMini {
+    position: absolute;
+    top: -8px;
+    display: none;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid red;
+    animation: bounceMini 1s infinite;
+}
+
+@keyframes bounceMini {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-3px);
+    }
+}
+
+#monster-info {
+    position: absolute;
+    min-width: 100px;
+    /* Chiều rộng tối thiểu */
+    padding: 0px 18px;
+    height: 5%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: none;
+    color: white;
+    bottom: 22%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    border-radius: 10px;
+    display: flex;
+    transition: bottom 0.5s ease;
+    white-space: nowrap;
+    /* Không cho phép xuống dòng */
+    text-align: center;
+    /* Căn giữa văn bản */
+    transition: bottom 0.5s ease;
+
+}
+
+.controls-button {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.controls-button:hover {
+    background-color: #0056b3;
+}
+
+.switch-btn {
+    position: absolute;
+    display: none;
+    bottom: 27.5%;
+    transform: translateX(-50%);
+    /* padding: 10px 20px; */
+    width: 25%;
+    font-size: 16px;
+    /* display: none; */
+    background: red;
+
+    height: 5%;
+    color: white;
+    left: 50%;
+    border-radius: 10px;
+    white-space: nowrap;
+    text-align: center;
+    transition: bottom 0.5s ease;
+}

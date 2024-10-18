@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bệnh Viện Quỷ Dữ</title>
+    <style>
+        .none {
+            display: none;
+        }
+        .colorTurn {
+            background-color: #2d7b0d !important;
+        }
+        .disableTime {
+            color: #e0d4d4 !important;
+            background-color: #40a5c2 !important;
+        }
+        #hiddenDiv {
+            padding: 0 20px;
+    background-color: #4CAF50;
+    color: white;
+    /* margin-top: 20px; */
+    left: 50%;
+    text-align: center;
+    top: 56px;
+    position: absolute;
+    transform: translateX(-50%);
+    min-width: 20px;
+    height: 32px;
+    line-height: 32px;
+    border-radius: 5px;
+    transition: opacity 1s ease;
+}
+
+
+        /* Nhân vật */
+        .character {
+            width: 50px; height: 50px;
+            position: absolute;
+            background-color: blue;
+        }
+        .characMini {
+            width: 15px;;
+    border-radius: 10px;
+    height: 15px;
+            position: absolute;
+        }
+        .enemy {
+            width: 50px; height: 50px;
+            position: absolute;
+            background-color: blue;
+            display: flex;
+            justify-content: center;
+        }
+        .enemyMini {
+            width: 15px;
+            height: 15px;
+            display: flex;
+            justify-content: center; 
+             position: absolute;
+
+        }
+        .exit {
+            position: absolute;
+        }
+
+        /* Các map */
+        .map {
+            width: 300px; height: 300px;
+            position: absolute;
+            background-color: lightgreen;
+            border: 1px solid black;
+            transition: transform 0.3s ease;
+        }
+
+        /* Vật thể trong map */
+        .object {
+            position: absolute;
+            background-color: red;
+            border: 1px solid black;
+        }
+        .objectMini {
+            position: absolute;
+            border: 1px solid black;
+          
+        }
+        #character.dangdi {
+            transform: scaleX(-1); /* Lật ảnh khi đi sang trái */
+        }
+        .obstacle {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: red;
+        }
+
+        /* Layout di chuyển */
+        /* .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 30px);
+            grid-gap: 5px;
+        } */
+
+    </style>
+    <!-- mini map, keyBoard, option  -->
+    <style>
+        .move-btn {
+            width: 51%;
+            height: 17%;
+            /* background-color: #10a17691; */
+            position: absolute;
+            padding: 10px;
+            background-color: transparent;
+            bottom: 4%;
+            left: 50%;
+            border-radius: 0.5rem;
+            transform: translateX(-50%);
+            border: 2px solid #000;
+            box-sizing: border-box;
+            pointer-events: none;
+        }
+    
+        #left {
+            position: absolute;
+            bottom: 0%;
+            left: 0%;
+            margin-left: 5px;
+            margin-bottom: 5px;
+        }
+    
+        #up {
+            position: absolute;
+            top: 0%;
+            margin-left: 5px;
+            margin-top: 5px;
+            left: 0%;
+        }
+    
+        #down {
+            position: absolute;
+            top: 0%;
+            right: 0%;
+            margin-right: 5px;
+            margin-top: 5px;
+        }
+    
+        #right {
+            position: absolute;
+            bottom: 0%;
+            right: 0%;
+            margin-bottom: 5px;
+            margin-right: 5px;
+        }
+    
+        #ok {
+            position: absolute;
+            /* margin-left: 5px; */
+            /* margin-top: 5px; */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    
+        #ok {
+            background: linear-gradient(to right, #2546c9, #170a1f);
+        }
+    
+        .move-btn button {
+            width: 29%;
+            height: 37%;
+            font-size: 60%;
+            text-align: center;
+            line-height: 20%;
+            border: 2px solid #000;
+            cursor: pointer;
+            color: white;
+            border-radius: 15%;
+            background: linear-gradient(to right, #0b8924de, #941414d9);
+            /* background: linear-gradient(to right, #2546c9, #170a1f); */
+            cursor: pointer;
+            pointer-events: auto;
+        }
+    </style>
+      <link rel="stylesheet" href="css/base.css">
+      <link rel="stylesheet" href="css/menu.css">
+      <link rel="stylesheet" href="css/fightMonster.css">
+</head>
+<body>
+     <!-- Container bao quanh điện thoại để căn giữa màn hình -->
+    <div id="phoneContainer" class="flexCenter">
+        <!-- Khung điện thoại với khoảng cách 15px từ mỗi cạnh -->
+        <div id="phoneFrame">
+            <div id="mapsContainer"></div>
+            <div style="width:100%; height: 100%" class="flexCenter">
+                <div class="miniMapp"></div>
+                <!-- nút tùy chọn menu -->
+                <div class="btnToggleMenu">Tùy Chọn</div>
+                <!-- menu -->
+                <div class="menuContainer none">
+                    <div class="menuChild">Hành trang</div>
+                    <div class="menuChild" id="menuItemHero">Tướng</div>
+                    <div class="menuChild">Tiềm năng</div>
+                    <div class="menuChild">Bản thân</div>
+                    <div class="menuChild">Bản đồ</div>
+                </div>    
+                <!-- Tùy chọn tướng -->
+                <div class="optionDevilContainer">
+                    <div class="optionDevilChild">tham chiến</div>
+                    <div class="optionDevilChild">Trang bị</div>
+                    <div class="optionDevilChild">Tiềm năng</div>
+                    <div class="optionDevilChild">Kĩ Năng</div>
+                    <div class="optionDevilChild">Thông Tin</div>
+                </div>  
+                <div style="width:100%; height: 100%">
+                    <!-- Bảng tướng -->
+                    <div id="characterTableContainer" class="none">
+                        <table id="characterTable"></table>
+                    </div>
+                
+                    <!-- Thông báo -->
+                    <div id="popup" class="none">
+                        <h2>Bảng Thông Báo</h2>
+                        <p></p>
+                    </div>
+                    <!-- Thẻ div thông báo -->
+                    <div id="confirmationDialogDevil" class="none">
+                        <h2>Bạn có muốn đi chơi?</h2>
+                        <button class="btnDeVil" id="yesButtonDevil">Có</button>
+                        <button class="btnDevil" id="noButtonDevil">Không</button>
+                    </div>
+                
+                </div>
+                <!-- Khung hiển thị thông tin nhân vật -->
+                <div class="characterContainer">
+                    <div style="width:100%;" class="flexCenter">
+                        <div class="character-avatar"></div> 
+                        <div>
+                            <div class="char-detail" id="char-name"></div>
+                            <div class="char-detail" id="char-gold"></div>
+                            <div class="char-detail" id="char-diamond"></div>
+                            <div class="char-detail" id="char-level"></div>
+                        </div>
+                    </div>
+                    <div style="width:100%; height: 9%; background:#5353db">
+                        <div class="exp-bar-character"></div>
+                    </div>
+                </div>
+                <!-- Box hiển thị thông tin quái-->
+                <div id="monster-info"></div>
+                <!-- Nút chuyển đổi -->
+                <button id="switch-mon" class="switch-btn">Chuyển</button>
+
+
+                <!-- Nút di chuyển nhân vật -->
+                <div class="move-btn">
+                    <button id="left">TRÁI</button>
+                    <button id="up">LÊN</button>
+                    <button id="down">XUỐNG</button>
+                    <button id="right">PHẢI</button>
+                    <button id="ok">OK</button>
+                </div>
+                <!-- in game battle -->
+                <div class="inGameBattle none">
+                    <!-- Hình vuông lớn căn giữa -->
+                    <div id="board"></div>
+                    <div id="hiddenDiv" class="none">Còn 55 lượt</div>
+                    <!-- Hình chữ nhật "Kỹ năng" và "Thoát" -->
+                    <div class="top-buttons">
+                        <div id="skill-button" class="rectangle">Kỹ năng</div>
+                        <div id="exit-button" class="rectangle">Thoát</div>
+                    </div>
+            
+                    <!-- Hình vuông nhỏ nổi lên -->
+                    <div class="timeBox" style="visibility: hidden;">
+                        <div id="time-display">5s</div>
+                    </div>
+            
+                    <!-- Modal Kỹ năng -->
+            <div id="skill-modal" class="modal">
+                <div class="modal-content">
+                    <span id="close-skill" class="close-btn">&times;</span>
+                    <h2>Kỹ năng</h2>
+                    <div class="skills">
+                        <div class="skill-box">
+                            <div class="square"></div>
+                            <p class="skill-name" id="skill1-char">Skill 1</p>
+                        </div>
+                        <div class="skill-box">
+                            <div class="square"></div>
+                            <p class="skill-name" id="skill2-char">Skill 2</p>
+                        </div>
+                        <div class="skill-box">
+                            <div class="square"></div>
+                            <p class="skill-name" id="skill3-char">Skill 3</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+                    <!-- Hộp thoại thoát -->
+                    <div id="exit-dialog" class="exit-dialog">
+                        <div class="dialog-content">
+                            <p>Bạn có muốn thoát không?</p>
+                            <button id="exit-confirm">OK</button>
+                            <button id="exit-cancel">Không</button>
+                        </div>
+                    </div>
+            
+                    <!-- Góc dưới: Hình vuông và chữ nhật -->
+                    <div class="bottom-container">
+                        <div class="bottom-block">
+                            <div class="boxMonIn_Game">
+                                <p id="monster-armor" style="text-align: center; font-size: 15px;">
+                                    ⛨ <span id="armorMon">0</span>
+                                </p>
+                                <div class="health-bar enemyAllHp">
+                                    <p><span id="current-monster-health">75</span> / <span
+                                            id="max-monster-health">75</span></p>
+                                    <div id="monster-health-bar" class="health"></div>
+                                </div>
+                                <style>
+                                    .health-bar {
+                                        border-radius: 10px;
+    border: 1px solid #000;
+    width: 94%;
+    overflow: hidden;
+    position: absolute;
+    font-size: 15px;
+    height: 29%;
+    color: black;
+    font-weight: bold;
+    left: 50%;
+    transform: translateX(-50%);
+                    }
+                    
+                    .health-bar p {
+                        position: absolute; /* Đặt văn bản nằm trong thanh máu */
+                        width: 100%;
+                        text-align: center; /* Căn giữa ngang */
+                        top: 50%;
+                        transform: translateY(-50%); /* Căn giữa dọc */
+                        margin: 0; /* Bỏ margin mặc định của <p> */
+                        /* font-weight: bold; */
+                        z-index: 1; /* Đảm bảo văn bản luôn hiển thị trên thanh máu */
+                    }
+                    
+                    .health {
+                        border: 1px solid #0000009c;
+                        border-radius: 10px;
+                        background-color: #f00a0a;
+                        height: 100%;
+                        width: 100%; /* Ban đầu, thanh máu sẽ đầy */
+                        position: absolute; /* Để thanh máu bên dưới văn bản */
+                        top: 0;
+                        left: 0;
+                        transition: width 0.7s ease;
+                        z-index: 0; /* Thanh máu nằm bên dưới */
+                    }
+                                </style>
+                                <div class="mana-bar">
+                                    <p><span id="current-monster-mana">0</span> / <span id="max-monster-mana">300</span></p>
+                                    <div id="monster-mana-bar" class="mana"></div>
+                                </div>
+                                <div class="rectangleSkill" style="right: 0">
+                                    <div class="circleMe" id="monMiniSkill1"></div>
+                                    <div class="circleMe" id="monMiniSkill2"></div>
+                                    <div class="circleMe" id="monMiniSkill3"></div>
+                                </div>
+                               
+                                <style>
+                                    
+                                    .mana-bar {
+                                        background-color: #7070c5;
+    border-radius: 10px;
+    border: 1px solid #000;
+    width: 94%;
+    overflow: hidden;
+    position: absolute;
+    font-size: 15px;
+    height: 29%;
+    color: black;
+    top: 68%;
+    font-weight: bold;
+    left: 50%;
+    transform: translateX(-50%);
+                    }
+                    
+                    .mana-bar p {
+                        position: absolute; /* Đặt văn bản nằm trong thanh mana */
+                        width: 100%;
+                        text-align: center; /* Căn giữa ngang */
+                        top: 50%;
+                        background: #00000038;
+                        color: white;
+                        transform: translateY(-50%); /* Căn giữa dọc */
+                        margin: 0; /* Xóa margin mặc định của <p> */
+                        z-index: 1; /* Đảm bảo văn bản luôn nằm trên thanh mana */
+                    }
+                    
+                    .mana {
+                        transition: width 0.7s ease;
+                        border: 1px solid #000;
+                        border-radius: 10px;
+                        background-color: blue; /* Màu xanh cho thanh mana */
+                        height: 100%;
+                        width: 0%; /* Thanh mana hiện tại là 0% vì chỉ số hiện tại là 0 */
+                        position: absolute; /* Để thanh mana nằm bên dưới văn bản */
+                        top: 0;
+                        left: 0;
+                        z-index: 0; /* Thanh mana nằm bên dưới văn bản */
+                    }
+                    
+                                </style>
+                            </div>
+                            <div class="bottom-square picMeInGame">
+
+                            </div>
+                        </div>
+                        <div class="bottom-block">
+                            <div class="boxMeIn_Game">
+                                <p id="character-armor" style="text-align: center; font-size: 15px;">
+                                    ⛨ <span id="armorMe">0</span>
+                                </p>
+                                <div class="health-bar meAllHp">
+                                    <p><span id="current-health">50</span> / <span id="max-health">50</span></p>
+                                    <div id="health-bar" class="health"></div>
+                                </div>
+                    
+                                <div class="mana-bar">
+                                    <p><span id="current-mana">0</span> / <span id="max-mana">300</span></p>
+                                    <div id="mana-bar" class="mana"></div>
+                                </div>
+                                <div class="rectangleSkill" style="left: 0">
+                                    <div class="circleMe" id="meMiniSkill1"></div>
+                                    <div class="circleMe" id="meMiniSkill2"></div>
+                                    <div class="circleMe" id="meMiniSkill3"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="bottom-square picMonInGame"></div>
+                        </div>
+                    </div>
+                    <style>
+                         .rectangleSkill{
+                            width: 47px;
+    height: 16px;
+    background-color: #ccc;
+    display: flex;
+    align-items: center;
+    /* padding-left: 1px; */
+    position: absolute;
+    bottom: -32%;
+        }
+
+        .circleMe {
+            width: 10px;
+            border: 1px solid #000;
+    height: 10px;
+    background-color: gray;
+    border-radius: 50%;
+    margin-left: 4px;
+        }
+                       
+                       @keyframes slowUpAndDown {
+    0%, 100% {
+        transform: translateY(0); /* Vị trí ban đầu */
+    }
+    50% {
+        transform: translateY(-2px); /* Di chuyển lên 5px */
+    }
+}
+.shadow {
+            box-shadow: 0 0 10px red;
+        }
+
+.flyBtn{
+    background: #af49f7;
+    box-shadow: 0 0 10px #002eff;
+    /* color: #000000; */
+    animation: slowUpAndDown 1.3s ease-in-out infinite;
+}
+                        .inGameBattle {
+                            position: absolute;
+                            width: 100%;
+                            height: 100%;
+                            background: rebeccapurple;
+                        }
+                        
+    #board {
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            width: 200px;
+                            height: 200px;
+                            background-color: rgb(173,216,230);
+                            border: 7px solid black;
+                            border-radius: 11px;
+                            overflow: hidden;
+                        }
+                        #board img {
+    /* width: calc(100% / 8); 
+    height: calc(100% / 8);  */
+    padding: 0px;
+    margin: 0px ;
+    position: absolute;
+
+    transition: box-shadow 0.3s ease-in-out;
+    transition: opacity 0.3s ease-in-out;
+    
+          
+}
+
+.blink {
+            animation: blink 0.5s infinite; /* Chớp nháy liên tục */
+        }
+
+        @keyframes blink {
+            0% {
+                opacity: 1; /* Ảnh hiện rõ */
+            }
+            50% {
+                opacity: 0; /* Ảnh biến mất */
+            }
+            100% {
+                opacity: 1; /* Ảnh hiện lại */
+            }
+        }
+fade-out2 {
+            opacity: 0; /* Mờ dần */
+        }
+
+        fade-in2 {
+            opacity: 1; /* Hiện ảnh mới */
+        }
+/* Hiệu ứng focus */
+.focus {
+    border-radius: 3px;
+    position: absolute;
+    animation: pulsate 1.5s infinite;
+    box-shadow: 0 0 0 5px rgba(20, 132, 47, 1); /* Shadow màu xanh */
+    z-index: 2;
+}
+
+@keyframes pulsate {
+    0% {
+        box-shadow: 0 0 0 5px rgba(20, 132, 47, 1); /* Tăng độ mờ lên 0.7 */
+    }
+    50% {
+        box-shadow: 0 0 0 7px rgba(20, 132, 47, 1); /* Tăng độ mờ lên 0.5 */
+    }
+    100% {
+        box-shadow: 0 0 0 4px rgba(20, 132, 47, 1); /* Tăng độ mờ lên 0.7 */
+    }
+}
+
+/* Hiệu ứng outFocus */
+.outFocus {
+    position: absolute;
+    border-radius: 3px;
+    animation: outPulsate 1.2s forwards; /* Animation cho outFocus */
+    box-shadow: 0 0 0 5px rgba(235, 8, 8, 1); /* Shadow màu đỏ */
+    z-index: 2;
+}
+
+@keyframes outPulsate {
+    0% {
+        box-shadow: 0 0 0 5px rgba(235, 8, 8, 1); /* Shadow ban đầu */
+    }
+    50% {
+        box-shadow: 0 0 0 7px rgba(235, 8, 8, 0.6); /* Mờ dần */
+    }
+    100% {
+        box-shadow: 0 0 0 2px rgba(235, 8, 8, 0.3); /* Không còn shadow */
+    }
+}
+
+                        
+                        .top-buttons {
+                            position: absolute;
+                            top: 10px;
+                            width: 100%;
+                            display: flex;
+                            justify-content: space-between;
+                            padding: 0 20px;
+                        }
+                        
+                        .rectangle {
+                            width: 100px;
+                            height: 40px;
+                            background-color: #333;
+                            color: white;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            cursor: pointer;
+                        }
+                        
+                        .timeBox {
+                            position: absolute;
+    top: 10px;
+    text-align: center;
+    left: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translateX(-50%);
+    width: 40px;
+    border-radius: 11px;
+    height: 40px;
+    font-size: 20px;
+    background-color: red;
+                        }
+                        
+                        .modal, .exit-dialog {
+                            display: none;
+                            position: absolute;
+                            width: 100%;
+                            height: 100%;
+                            background-color: rgba(0, 0, 0, 0.8);
+                            z-index: 2;
+                            justify-content: center;
+                            align-items: center;
+                        }
+                        
+                        .modal-content, .dialog-content {
+                            background-color: white;
+                            padding: 20px;
+                            border-radius: 10px;
+                            text-align: center;
+                            position: absolute;
+                        }
+                        
+                        .close-btn {
+                            position: absolute;
+                            top: 10px;
+                            right: 10px;
+                            font-size: 20px;
+                            cursor: pointer;
+                        }
+                        
+                        .skills {
+                            display: flex;
+                            justify-content: space-between;
+                            margin-top: 20px;
+                        }
+                        
+                        .skill-box {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                        }
+                        
+                        .square {
+                            width: 60px;
+                            height: 60px;
+                            background-color: #333;
+                            border: 1px solid #000;
+                        }
+                        
+                        .skill-name {
+                            margin-top: 10px;
+                            /* color: white; */
+                        }
+                        
+                        
+                        .bottom-container {
+                            position: absolute;
+                            bottom: 10px;
+                            flex-direction: row-reverse;
+                            width: 100%;
+                            display: flex;
+                            justify-content: space-between;
+                            padding: 0 20px;
+                        }
+                        
+                        .bottom-block {
+                            display: flex;
+                            width: 100%;
+                            flex-direction: column;
+                            align-items: center;
+                        }
+                        
+                        .boxMeIn_Game, .boxMonIn_Game {
+                            width: 39%;
+    padding: 0px 4px;
+    position: absolute;
+    height: 106%;
+    bottom: 165%;
+    color: white;
+    background-color: #333;
+                        }
+                        
+                        .bottom-square {
+                            width: 50px;
+                            height: 50px;
+                            background-color: red;
+                        }
+                        
+                        </style>
+                </div>
+
+                <!-- lay out đen -->
+                <div class="spinner" id="spinner"></div> <!-- Hình động -->
+                <!-- Lớp overlay màu đen -->
+                <div class="overlay" id="overlay"></div>  <style>
+                     /* Hình động để chỉ trạng thái đang chờ */
+        .spinner {
+            border: 8px solid #f3f3f3; /* Màu nền */
+            border-top: 8px solid #3498db; /* Màu cho vòng tròn */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            top: 50%;
+            left: 43%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            z-index: 2;
+            visibility: hidden;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+         /* Lớp phủ đen */
+         .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: black;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            z-index: 1;
+            visibility: hidden;
+        }
+        /* Hiệu ứng fade in/out cho lớp phủ đen */
+        .fade-in {
+            opacity: 1;
+            visibility: visible;
+        }
+        .fade-out {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s ease-in-out, visibility 0s 1s; 
+        }
+                </style>
+
+
+                <div id="blackOverlay" class="none"></div>
+            </div>
+            
+    </div>
+
+    <!-- khai báo thông tin gamer -->
+    <script>
+         const mapsData = [
+            {
+                id: 0,
+                backgroundColor: 'lightblue',
+                size: { width: 2000, height: 2000 },
+                characters: [
+                    { 
+                        id: 'character1', position: { top: 50, left: 50 }, color: 'blue' 
+                    }
+                ],
+                objects: [
+                    { 
+                        size: { width: 80, height: 80 }, 
+                        position: { top: 200, left: 200 }, color: 'orange' 
+                    }
+                ],
+                enemies: [
+                     {
+                        level: 1, experience: 0, id:0, 
+
+                        armor: 0, maxMana: 300, mana: 0, // in-game
+
+                        hpGear: 0, dameGear: 0, armorGear: 0, // trang bị
+
+                        get hpLv() { return 100 + (this.level - 1) * 20 },
+                        get dameLv() { return 20 + (this.level - 1) * 10 },
+                        get armorLv() { return 3 + (this.level - 1) * 2 },
+                        get maxHealth() { return this.hpGear + this.hpLv },
+                        get maxDame() { return this.dameGear + this.dameLv },
+                        get maxArmor() { return this.armorGear + this.armorLv },
+                        currentHealth: 50,
+
+                        // Skill 1: Trừ 10 máu của quái vật
+                        skill1(characterInGame) {
+                            if (monsterInGame.mana >= 10) {
+                                monsterInGame.mana -= 10; // Giảm mana
+                                attackInGame(10, characterInGame)
+                            }
+                        },
+                        skill2(characterInGame) {
+                            if (monsterInGame.mana >= 10) {
+                                monsterInGame.mana -= 20; // Giảm mana
+                                attackInGame(20, characterInGame)
+                            }
+                        },
+                        skill3(characterInGame) {
+                            if (monsterInGame.mana >= 10) {
+                                monsterInGame.mana -= 30; // Giảm mana
+                                attackInGame(30, characterInGame)
+                            }
+                        },
+                        size: { width: 50, height: 50 }, lv: 5,
+                        name: "quái Vật HĂM",
+                        position: { top: 200, left: 123 }, color: 'black'
+                    },
+                    {
+                        level: 1, experience: 0, id: 1,
+
+                        armor: 0, maxMana: 300, mana: 0, // in-game
+
+                        hpGear: 0, dameGear: 0, armorGear: 0, // trang bị
+
+                        get hpLv() { return 100 + (this.level - 1) * 20 },
+                        get dameLv() { return 20 + (this.level - 1) * 10 },
+                        get armorLv() { return 3 + (this.level - 1) * 2 },
+                        get maxHealth() { return this.hpGear + this.hpLv },
+                        get maxDame() { return this.dameGear + this.dameLv },
+                        get maxArmor() { return this.armorGear + this.armorLv },
+                        currentHealth: 50,
+
+                        // Skill 1: Trừ 10 máu của quái vật
+                        skill1(characterInGame) {
+                            if (monsterInGame.mana >= 10) {
+                                monsterInGame.mana -= 10; // Giảm mana
+                                attackInGame(10, characterInGame)
+                            }
+                        },
+                        skill2(characterInGame) {
+                            if (monsterInGame.mana >= 10) {
+                                monsterInGame.mana -= 20; // Giảm mana
+                                attackInGame(20, characterInGame)
+                            }
+                        },
+                        skill3(characterInGame) {
+                            if (monsterInGame.mana >= 10) {
+                                monsterInGame.mana -= 30; // Giảm mana
+                                attackInGame(30, characterInGame)
+                            }
+                        },
+                        size: { width: 50, height: 50 }, lv: 2,
+                        name: "quái Vật HAH",
+                        position: { top: 200, left: 270 }, color: 'black'
+                     }
+                 ],
+                exits: [
+                    { 
+                        size: { width: 50, height: 50 }, 
+                        position: { top: 300, left: 300 },  mapI: 2, top: 50, left: 50 
+                    }
+                ]
+            },
+            {
+                id: 1,
+                backgroundColor: 'pink',
+                // backgroundColor: 'lightcoral',
+                size: { width: 1000, height: 1000 },
+                characters: [
+                    { 
+                        id: 'character1', position: { top: 50, left: 50 }, color: 'blue' 
+                    }
+                ],
+                objects: [
+                    { 
+                        size: { width: 40, height: 40 }, 
+                        position: { top: 200, left: 200 }, color: 'orange' 
+                    }
+                ],
+                enemies: [
+                    { 
+                        size: { width: 50, height: 50 }, 
+                        name: "quái Vật 1",
+                        position: { top: 200, left: 200 }, color: 'black' 
+                    },
+                    { 
+                        size: { width: 50, height: 50 }, 
+                        name: "quái Vật 2",
+                        position: { top: 200, left: 200 }, color: 'black' 
+                    }
+                ],
+                exits: [
+                    { 
+                        size: { width: 50, height: 50 }, 
+                        position: { top: 300, left: 300 },  mapI: 3, top: 150, left: 20 
+                    }
+                ]
+            },
+            {
+                id: 2,
+                backgroundColor: 'lightgreen',
+                size: { width: 1500, height: 1500 },
+                characters: [
+                    { 
+                        id: 'character1', position: { top: 50, left: 50 }, color: 'blue' 
+                    }
+                ],
+                objects: [
+                    { 
+                        size: { width: 40, height: 40 }, 
+                        position: { top: 200, left: 200 }, color: 'orange' 
+                    }
+                ],
+                enemies: [
+                    { 
+                        size: { width: 50, height: 50 }, 
+                        position: { top: 200, left: 200 }, color: 'black' 
+                    }
+                ],
+                exits: [
+                    { 
+                        size: { width: 50, height: 50 }, 
+                        position: { top: 300, left: 300 }, mapI: 1, top: 900, left: 10 
+                    }
+                ]
+            },
+            {
+                character: { 
+                    // id: 'character', 
+                    charI: 0,
+                    position: { top: 0, left: 0 }, 
+                    mapI: 0, name: 'Kun1891',
+                    vang: 0, kimcuong: 0,
+                    level: 1, experience: 0,
+
+                }
+            }
+        ];
+
+        function updateCharacterInfo() {
+            const expBar = document.querySelector('.exp-bar-character');
+            const charName = document.getElementById('char-name');
+            const charGold = document.getElementById('char-gold');
+            const charDiamond = document.getElementById('char-diamond');
+            const charLevel = document.getElementById('char-level');
+
+            // Cập nhật width của thanh kinh nghiệm theo phần trăm kinh nghiệm
+            var x = mapsData[mapsData.length-1].character
+            expBar.style.width = `${x.experience}%`;
+
+            // Cập nhật thông tin nhân vật
+            charName.textContent = `Tên: ${x.name}`;
+            charGold.textContent = `Vàng: ${x.vang}`;
+            charDiamond.textContent = `Kim cương: ${x.kimcuong}`;
+            charLevel.textContent = `Cấp độ: ${x.level}+${x.experience}%`;
+        }
+        
+        
+    </script>
+    <!-- map -->
+    <script>
+        let currentMapIndex = 1;
+        // Dữ liệu cho các map
+        var five= 5
+
+        // Tạo map từ dữ liệu
+        var characterr = mapsData[mapsData.length-1].character
+        function createMaps() {
+            
+            if (characterr.mapI === 0) {
+                // characterr.mapI = 1; characterr.charI = 1;
+                characterr.position.top = 48; characterr.position.left = 49
+            }
+            const mapsContainer = document.getElementById('mapsContainer');
+            mapsContainer.innerHTML = ''; // Xóa nội dung cũ khi chuyển map
+            const miniMappCon = document.querySelector(".miniMapp")
+            miniMappCon.innerHTML = ''; // Xóa nội dung cũ khi chuyển map
+            
+            
+            const mapData = mapsData[characterr.mapI]
+            const map = document.createElement('div');
+            map.classList.add('map');
+            map.id = `map${mapData.id}`;
+            map.style.width = `${mapData.size.width}px`;
+            map.style.height = `${mapData.size.height}px`;
+            map.style.backgroundColor = mapData.backgroundColor;
+            mapsContainer.appendChild(map);
+
+            const miniMapp = document.createElement('div');
+            miniMapp.style.width = `${mapData.size.width/five}px`;
+            miniMapp.style.height = `${mapData.size.height/five}px`;
+            miniMapp.style.backgroundColor = '#ffff005c';
+            miniMapp.classList.add('miniMap');
+            miniMapp.style.position  = 'absolute'
+            miniMappCon.appendChild(miniMapp);
+            // tạo nhân vật
+            const character = document.createElement('div');
+            character.classList.add('character');
+            character.id = "character";
+            // character.id = characterr.id;
+            character.style.top = `${characterr.position.top}px`; 
+            character.style.left = `${characterr.position.left}px`;
+            character.style.backgroundColor = characterr.color;
+            map.appendChild(character);
+
+            const characMini = document.createElement('div');
+            characMini.classList.add('characMini');
+            characMini.style.top = `${characterr.position.top/five}px`; 
+            characMini.style.left = `${characterr.position.left/five}px`;
+            characMini.style.backgroundColor = 'black'
+            miniMapp.appendChild(characMini);
+
+             // Thêm vật thể
+            mapData.objects.forEach(obj => {
+                const object = document.createElement('div');
+                object.classList.add('object', 'obstacle');
+                object.style.width = `${obj.size.width}px`;
+                object.style.height = `${obj.size.height}px`;
+                object.style.top = `${obj.position.top}px`;
+                object.style.left = `${obj.position.left}px`;
+                object.style.backgroundColor = obj.color;
+                map.appendChild(object);
+
+                const objectMini = document.createElement('div');
+                objectMini.classList.add('objectMini');
+                objectMini.style.width = `${obj.size.width/five}px`;
+                objectMini.style.height = `${obj.size.height/five}px`;
+                objectMini.style.top = `${obj.position.top/five}px`;
+                objectMini.style.left = `${obj.position.left/five}px`;
+                objectMini.style.backgroundColor = 'red'
+                miniMapp.appendChild(objectMini);
+            });
+
+            // Thêm các ô exit
+            mapData.exits.forEach(exit => {
+                const exitElement = document.createElement('div');
+                exitElement.classList.add('exit');
+                exitElement.dataset.mapI = exit.mapI
+                exitElement.dataset.top = exit.top
+                exitElement.dataset.left = exit.left
+                exitElement.style.width = `${exit.size.width}px`;
+                exitElement.style.height = `${exit.size.height}px`;
+                exitElement.style.top = `${exit.position.top}px`;
+                exitElement.style.left = `${exit.position.left}px`;
+                exitElement.style.backgroundColor = 'green'; // Màu của ô exit
+                map.appendChild(exitElement);
+
+
+                const exitElementMini = document.createElement('div');
+                exitElementMini.style.width = `15px`;
+                exitElementMini.style.height = `15px`;
+                exitElementMini.style.top = `${exit.position.top/five}px`;
+                exitElementMini.style.left = `${exit.position.left/five}px`;
+                exitElementMini.style.position = `absolute`;
+                exitElementMini.style.backgroundColor = 'green'; // Màu của ô exit
+                miniMapp.appendChild(exitElementMini);
+                // miniMapp.style.display = 'none'
+
+                
+            });
+            // Thêm các enemy
+            var o = 0 
+            mapData.enemies.forEach(exit => {
+                const enemy = document.createElement('div');
+                const enemyCon = document.createElement('div');
+                enemyCon.classList.add('arrow');
+
+                enemy.classList.add('enemy');
+                enemy.dataset.codeEnemy = o
+                enemy.dataset.id = exit.id
+                enemy.dataset.name = exit.name
+                enemy.dataset.lv = exit.lv
+                enemy.isGo = true
+                enemy.style.width = `${exit.size.width}px`;
+                enemy.style.height = `${exit.size.height}px`;
+                enemy.style.top = `${exit.position.top}px`;
+                enemy.style.left = `${exit.position.left}px`;
+                enemy.style.backgroundColor = 'violet'; // Màu của ô exit
+                map.appendChild(enemy).appendChild(enemyCon);
+
+                const enemyMini = document.createElement('div');
+                const enemyMiniArrow = document.createElement('div');
+                enemyMiniArrow.classList.add("arrowMini");
+                enemyMini.classList.add("enemyMini", `enemyMini${o}`);
+                o++
+                enemyMini.style.top = `${exit.position.top/five}px`;
+                enemyMini.style.left = `${exit.position.left/five}px`;
+                enemyMini.style.backgroundColor = 'violet'; 
+                miniMapp.appendChild(enemyMini).appendChild(enemyMiniArrow)
+            });
+            setTimeout(()=>{updatePhoneFramePosition()}, 300)
+            // updatePhoneFramePosition()
+
+
+            // mapsData.forEach(mapData => {
+                // Thêm nhân vật
+                // mapData.characters.forEach(char => {
+                //     const character = document.createElement('div');
+                //     character.classList.add('character');
+                //     character.id = char.id;
+                //     character.style.top = `${char.position.top}px`;
+                //     character.style.left = `${char.position.left}px`;
+                //     character.style.backgroundColor = char.color;
+                //     map.appendChild(character);
+                // });
+            // });
+        }
+
+        // Khởi tạo map
+        // createMaps();
+        
+        function updatePhoneFramePosition() {
+            const currentCharacter = document.getElementById("character")
+            const map = currentCharacter.parentElement;
+            const mapWidth = map.offsetWidth;
+            const mapHeight = map.offsetHeight;
+
+            const phoneFrame = document.getElementById('phoneFrame');
+            const phoneWidth = phoneFrame.offsetWidth;
+            const phoneHeight = phoneFrame.offsetHeight;
+
+            let top = parseInt(currentCharacter.style.top);
+            let left = parseInt(currentCharacter.style.left);
+
+            let offsetX = left - (phoneWidth / 2 - currentCharacter.offsetWidth / 2);
+            let offsetY = top - (phoneHeight / 2 - currentCharacter.offsetHeight / 2);
+
+            if (offsetX < 0) offsetX = 0;
+            if (offsetY < 0) offsetY = 0;
+            // if ()
+            if (offsetX > mapWidth - phoneWidth) offsetX = mapWidth - phoneWidth;
+            if (offsetY > mapHeight - phoneHeight) offsetY = mapHeight - phoneHeight;
+
+            map.style.transform = `translate(${-offsetX}px, ${-offsetY}px)`;
+            updatePhoneFramePosition2()
+        }
+
+        function updatePhoneFramePosition2() {
+            const currentCharacter = document.querySelector(".characMini")
+            const map = currentCharacter.parentElement;
+            const mapWidth = document.querySelector(".miniMap").offsetWidth;
+            const mapHeight = document.querySelector(".miniMap").offsetHeight;
+
+            const phoneFrame = document.querySelector(".miniMapp")
+            const phoneWidth = phoneFrame.offsetWidth;
+            const phoneHeight = phoneFrame.offsetHeight;
+
+            let top = parseInt(currentCharacter.style.top);
+            let left = parseInt(currentCharacter.style.left);
+
+            let offsetX = left - (phoneWidth / 2 - currentCharacter.offsetWidth / 2);
+            let offsetY = top - (phoneHeight / 2 - currentCharacter.offsetHeight / 2);
+
+            if (offsetX < 0) offsetX = 0;
+            if (offsetY < 0) offsetY = 0;
+            // if ()
+            if (offsetX > mapWidth - phoneWidth) offsetX = mapWidth - phoneWidth +4 ;
+            if (offsetY > mapHeight - phoneHeight) offsetY = mapHeight - phoneHeight+4;
+
+            map.style.transform = `translate(${-offsetX}px, ${-offsetY}px)`;
+        }
+
+        var goExit = 0
+        function checkCollisionWithExits() {
+            const character = document.getElementById('character');
+            const exits = document.querySelectorAll('.exit');
+
+            for (const exit of exits) {
+                let exitRect = exit.getBoundingClientRect();
+                let characterRect = character.getBoundingClientRect();
+
+            // Kiểm tra va chạm
+            if (!(characterRect.right < exitRect.left || 
+                characterRect.left > exitRect.right || 
+                characterRect.bottom < exitRect.top || 
+                characterRect.top > exitRect.bottom)) {
+                     // Nếu nhân vật chạm vào ô exit, chuyển map
+                        const characterr = mapsData[mapsData.length - 1].character;
+                        characterr.mapI = exit.dataset.mapI
+                        const newTop = exit.dataset.top, newLeft = exit.dataset.left;  // Lấy giá trị từ data-symbol2
+
+                    // Đặt vị trí map và tọa độ nhân vật
+                    characterr.position = { top: parseInt(newTop), left: parseInt(newLeft) };  // Đặt vị trí khởi đầu cho map mới
+                        goExit++
+                        return true
+                }
+            }
+            return  false
+        }
+    
+    
+        // ------------------ go
+    const container = document.getElementById('phoneFrame');
+     // Lấy tất cả các vật cản có class "obstacle"
+    let moving = { left: false, right: false, up: false, down: false };
+    let interval;
+    const speed = 2; // Điều chỉnh tốc độ
+
+    // Hàm di chuyển nhân vật
+    function moveCharacter(direction) {
+        const container = document.querySelector('.map');
+        const containCon = document.querySelector('.miniMapp');
+        function checkExitAndObstacle() {
+            if (checkCollisionWithExits() && goExit != 0) {
+                setTimeout(function () {
+                    stopCharacter(); goExit = 0; createMaps();
+                }, 1000)
+            }
+            if (checkCollision()) {
+                // if (checkCollision(characterRect)) {// ??? sao ko truyền đc 
+                stopCharacter();
+            }
+        }
+        if (interval) clearInterval(interval);
+        interval = setInterval(() => {
+            const character = document.getElementById('character');
+            const miniChar = document.querySelector('.characMini');
+            const characterRect = character.getBoundingClientRect();
+            let containerRect = container.getBoundingClientRect();
+
+            switch (direction) {
+                case 'left':
+                    if (characterRect.left > containerRect.left) {
+                        var x = character.offsetLeft - speed
+                        character.style.left = x + 'px';
+                        miniChar.style.left = x/five + 'px';
+                    } else {
+                    // if (characterRect.left <= containerRect.left) {
+                        character.style.left = '2px'; 
+                        miniChar.style.left = 2/five + 'px'; stopCharacter();
+                    }
+                    break;
+                case 'right':
+                    {
+                    if (characterRect.right < containerRect.right) {
+                        var x = character.offsetLeft + speed
+                        character.style.left = x + 'px';
+                        miniChar.style.left = x/five + 'px';
+
+                    }
+                    if (characterRect.right >= containerRect.right) {
+                        var x = container.offsetWidth -character.offsetWidth - 4
+                        character.style.left = x + 'px'
+                        miniChar.style.left = x/five -4 + 'px'
+                        stopCharacter();
+                    }
+                    break;
+                }
+                case 'up':
+                    if (characterRect.top > containerRect.top) {
+                        var x = character.offsetTop - speed 
+                        character.style.top = x + 'px';
+                        miniChar.style.top = x/five + 'px';
+                    }
+                    if (characterRect.top <= containerRect.top) {
+                        character.style.top = 2 + 'px';
+                        miniChar.style.top = 2/five + 'px'; stopCharacter();
+                    }
+                    break;
+                case 'down':
+                    if (characterRect.bottom < containerRect.bottom) {
+                        var x = character.offsetTop + speed
+                        character.style.top = x + 'px';
+                        miniChar.style.top = x/five + 'px';
+                    }
+                    if (characterRect.bottom >= containerRect.bottom) {
+                        var x = container.offsetHeight - character.offsetHeight - 4
+                        character.style.top = x + 'px'
+                        miniChar.style.top = x/five -4 + 'px';
+                        stopCharacter();
+                    }
+                    break;
+            }
+            checkExitAndObstacle()
+            updatePhoneFramePosition()
+        }, 30);
+    }
+
+    function checkCollision() {
+        const character = document.getElementById('character');
+        const characterRect = character.getBoundingClientRect();
+        const obstacles = document.querySelectorAll('.obstacle');
+    for (let obstacle of obstacles) {
+        let obstacleRect = obstacle.getBoundingClientRect();
+
+        // Kiểm tra va chạm
+        if (!(characterRect.right < obstacleRect.left || 
+              characterRect.left > obstacleRect.right || 
+              characterRect.bottom < obstacleRect.top || 
+              characterRect.top > obstacleRect.bottom)) {
+            var miniChar = document.querySelector(".characMini")
+              
+            // Nếu va chạm từ bên trái (cạnh phải của nhân vật chạm cạnh trái của vật thể)
+            if (moving.right && characterRect.right >= obstacleRect.left && characterRect.left < obstacleRect.left) {
+                character.style.left = (obstacle.offsetLeft - character.offsetWidth - 2) + 'px';
+                miniChar.style.left = obstacle.offsetLeft/five - miniChar.offsetWidth+ 'px'
+                
+            }
+            // Nếu va chạm từ bên phải (cạnh trái của nhân vật chạm cạnh phải của vật thể)
+            else if (moving.left && characterRect.left <= obstacleRect.right && characterRect.right > obstacleRect.right) {
+                character.style.left = (obstacle.offsetLeft + obstacle.offsetWidth + 2) + 'px';
+                miniChar.style.left = obstacle.offsetLeft/five + obstacle.offsetWidth/five+ 'px'
+                
+            }
+            // Nếu va chạm từ phía trên (cạnh dưới của nhân vật chạm cạnh trên của vật thể)
+            if (moving.down && characterRect.bottom >= obstacleRect.top && characterRect.top < obstacleRect.top) {
+                character.style.top = (obstacle.offsetTop - character.offsetHeight - 2) + 'px';
+                miniChar.style.top = obstacle.offsetTop/five - miniChar.offsetHeight + 'px'
+            }
+            // Nếu va chạm từ phía dưới (cạnh trên của nhân vật chạm cạnh dưới của vật thể)
+            else if (moving.up && characterRect.top <= obstacleRect.bottom && characterRect.bottom > obstacleRect.bottom) {
+                character.style.top = (obstacle.offsetTop + obstacle.offsetHeight + 2) + 'px';
+                miniChar.style.top = obstacle.offsetTop/five + obstacle.offsetHeight/five + 'px'
+            }
+
+            return true; // Nếu có va chạm, trả về true
+        }
+    } 
+    return false;
+}
+
+
+
+    // Dừng di chuyển nhân vật
+    function stopCharacter() {
+        clearInterval(interval);
+        // character.style.backgroundImage = 'url("asset/img/dung_im.gif")';
+        // Đặt lại trạng thái di chuyển. resetMoving() {
+        moving.left = false; moving.right = false;
+        moving.up = false; moving.down = false;
+    }
+
+    // Xử lý sự kiện khi nhấn nút điều khiển
+    function handleControl(direction) {
+        if (moving[direction]) {stopCharacter(); return}
+        stopCharacter();
+        // character.style.backgroundImage = 'url("asset/img/di.gif")';
+        if (direction === 'left') {
+            // character.classList.add('dangdi');
+        } else if (direction === 'right') {
+            // character.classList.remove('dangdi');
+        }
+        moving[direction] = true;
+        moveCharacter(direction);
+    }
+
+    // Gán sự kiện cho các nút
+    document.getElementById('up').addEventListener('click', () => handleControl('up'));
+    document.getElementById('down').addEventListener('click', () => handleControl('down'));
+    document.getElementById('left').addEventListener('click', () => handleControl('left'));
+    document.getElementById('right').addEventListener('click', () => handleControl('right'));
+    </script>
+<!-- mũi tên đầu nhân vật  -->
+<script>
+    let monsterPresent = 0
+    let monstersNear = []; // Lưu danh sách các quái vật gần
+    let currentMonsterIndex = 0; // Quái vật đang được chọn
+    let monsterSelectedManually = false; // Trạng thái để biết có phải người chơi đã chuyển quái vật
+    // Nút di chuyển
+    // document.getElementById('right-btn').addEventListener('click', () => movePlayer(20, 0));
+    // Kiểm tra khoảng cách giữa nhân vật và các quái vật
+    function checkProximity() {
+        const player = document.getElementById('character');
+        const monsters = Array.from(document.querySelectorAll('.enemy'));
+        let previousMonstersNear = [...monstersNear]; // Lưu lại danh sách trước đó để so sánh
+        monstersNear = []; // Mỗi lần kiểm tra sẽ làm mới danh sách quái vật gần
+        monsters.forEach(monster => {
+            const aRect = player.getBoundingClientRect();
+            const bRect = monster.getBoundingClientRect();
+            const distanceX = Math.abs(aRect.left - bRect.left);
+            const distanceY = Math.abs(aRect.top - bRect.top);
+            if (distanceX <= 100 + aRect.width && distanceY <= 100 + aRect.width) {
+                monstersNear.push(monster); // Thêm quái vật vào danh sách gần
+            }
+        });
+
+        // Nếu danh sách quái vật gần thay đổi và không có hành động chuyển quái vật
+        if (monstersNear.length > 0 && (!monsterSelectedManually || monstersNear !== previousMonstersNear)) {
+            // Kiểm tra và điều chỉnh currentMonsterIndex
+            if (currentMonsterIndex >= monstersNear.length) {
+                currentMonsterIndex = 0; // Đặt lại chỉ số về 0 nếu vượt quá
+            }
+            monsterPresent = monstersNear[currentMonsterIndex]
+            var x = monstersNear[currentMonsterIndex].dataset.codeEnemy
+            showMonsterInfo(monstersNear[currentMonsterIndex], x); // Hiển thị quái vật hiện tại
+            showSwitchButton(monstersNear.length > 1); // Hiển thị nút chuyển nếu có nhiều hơn 1 quái
+        }
+
+        // Reset lại trạng thái chuyển thủ công khi không có quái vật gần
+        if (monstersNear.length === 0) {
+            hideMonsterInfo(); // Không có quái vật gần, ẩn bảng
+            monsterSelectedManually = false; // Reset lại trạng thái chuyển thủ công
+            currentMonsterIndex = 0; // Đặt lại currentMonsterIndex nếu không có quái vật
+        }
+    }
+
+    // Hiển thị thông tin quái vật gần và mũi tên
+    function showMonsterInfo(monster, x) {
+        const infoBox = document.getElementById('monster-info');
+        const arrow = monster.querySelector('.arrow');
+        const arrowMini = document.querySelector(`.enemyMini${x}`).querySelector(".arrowMini")
+        infoBox.style.display = 'block';
+        // infoBox.style.bottom = '0'; // Cho bảng xuất hiện từ dưới lên
+        infoBox.textContent = `⚔️ ${monsterPresent.dataset.name} | Lv ${monsterPresent.dataset.lv}`;
+        // Hiển thị mũi tên trên đầu quái vật
+        var tallX = document.querySelectorAll(".arrow")
+        var miniX = document.querySelectorAll(".arrowMini")
+        tallX.forEach(i=>i.style.display = 'none')
+        miniX.forEach(i=>i.style.display = 'none')
+        arrow.style.display = 'block';
+        arrowMini.style.display = 'block';
+    }
+    // Ẩn bảng và mũi tên
+    function hideMonsterInfo() {
+        const infoBox = document.getElementById('monster-info');
+        infoBox.style.display = 'none';
+        // infoBox.style.bottom = '-100px'; // Ẩn bảng xuống dưới
+        var tall = document.querySelectorAll(".arrow")
+        var mini = document.querySelectorAll(".arrowMini")
+        tall.forEach(i=>i.style.display = 'none')
+        mini.forEach(i=>i.style.display = 'none')
+        // infoBox.style.bottom = '0'; // Cho bảng xuất hiện từ dưới lên
+    }
+    // Hiển thị nút chuyển quái vật nếu có nhiều quái vật gần
+    function showSwitchButton(show) {
+        const switchButton = document.getElementById('switch-mon');
+        if (show) {
+            switchButton.style.display = 'block';
+        } else {
+            switchButton.style.display = 'none';
+        }
+    }
+    // Chuyển mũi tên và bảng thông tin sang quái vật tiếp theo
+    document.getElementById('switch-mon').addEventListener('click', () => {
+        currentMonsterIndex = (currentMonsterIndex + 1) % monstersNear.length;
+        // ----
+        var tall = document.querySelectorAll(".arrow")
+        var mini = document.querySelectorAll(".arrowMini")
+        tall.forEach(i=>i.style.display = 'none')
+        mini.forEach(i=>i.style.display = 'none')
+        // ----
+        monsterPresent = monstersNear[currentMonsterIndex]
+        var x = monstersNear[currentMonsterIndex].dataset.codeEnemy
+        showMonsterInfo(monstersNear[currentMonsterIndex], x);
+        monsterSelectedManually = true; // Ghi nhớ rằng người chơi đã chọn thủ công
+    });
+    // click tấn công
+    document.getElementById("monster-info").addEventListener('click', () => {
+        var idMonster = monsterPresent.dataset.id
+        monsterIsInGame(idMonster)
+        mimi(); stopCharacter(); 
+
+        document.querySelector(".boxMeIn_Game").classList.remove("colorTurn", "flyBtn")
+        document.querySelector(".boxMonIn_Game").classList.remove("colorTurn", "flyBtn")
+        setTimeout(()=>{showOverLay(1); checkFight()}, 1000)
+    });
+    
+</script>
+<!-- time -->
+<script>
+    let currentTurn = "character";  // "character" or "monster"
+    let tTurns = 0;
+    let timer;
+    let timeLeft
+    let isPaused = false;
+
+    const timeDisplay = document.getElementById('time-display');
+    const timeBox = document.querySelector('.timeBox');
+    function startTurn(x) {
+        if (x== undefined) {timeLeft = 10} else {timeLeft = timeLeft}
+        timeBox.style.visibility = 'visible'; // Hiện thời gian khi bắt đầu lượt
+        updateTimeDisplay();
+
+        if (currentTurn === "character") {
+            // yellowCharBtn.classList.remove('disabled');
+            // yellowMonBtn.classList.add('disabled');
+            document.querySelector(".boxMeIn_Game").classList.add("colorTurn", "flyBtn")
+            document.querySelector(".boxMonIn_Game").classList.remove("colorTurn", "flyBtn")
+        } else {
+            // yellowMonBtn.classList.remove('disabled');
+            // yellowCharBtn.classList.add('disabled');
+            document.querySelector(".boxMeIn_Game").classList.remove("colorTurn", "flyBtn")
+            document.querySelector(".boxMonIn_Game").classList.add("colorTurn", "flyBtn")
+        }
+       
+
+        timer = setInterval(() => {
+            if (!isPaused) {
+                timeLeft--;
+                if (timeLeft >=  0) {updateTimeDisplay()}
+                else {endTurn()}
+            } // else {console.log('hihi')}
+        }, 1000);
+    }
+
+    // Hiển thị thời gian còn lại và người đang có lượt
+    function updateTimeDisplay() {
+        // let turnName = currentTurn === "character" ? "Nhân vật" : "Quái vật";
+        // timeDisplay.textContent = `${turnName} - Thời gian còn lại: ${timeLeft}s`;
+        timeDisplay.textContent = `${timeLeft}s`;
+    }
+
+    // Function để kết thúc lượt
+    function endTurn() {
+        clearInterval(timer);
+
+        if (currentTurn === "character" && tTurns > 0) {
+            hihi(); startTurn();
+        } else if (currentTurn === "monster" && tTurns > 0) {
+            hihi(); startTurn();
+        } else {
+            document.querySelector(".boxMeIn_Game").classList.remove("colorTurn", "flyBtn")
+            document.querySelector(".boxMonIn_Game").classList.remove("colorTurn", "flyBtn")
+            // timeDisplay.textContent = ''; // Xóa thông báo thời gian khi kết thúc lượt
+
+            if (currentTurn === "character") {
+                timeBox.classList.add("disableTime")
+                setTimeout(function () {
+                    timeBox.classList.remove("disableTime") 
+                    currentTurn = "monster"; startTurn();
+                }, 1200);
+            } else if (currentTurn === "monster") {
+                timeBox.classList.add("disableTime")
+                setTimeout(function () {
+                    timeBox.classList.remove("disableTime") 
+                    currentTurn = "character"; startTurn()
+                }, 1200);
+            }
+        }
+        function hihi() {
+            const hiddenDiv = document.getElementById('hiddenDiv');
+            hiddenDiv.classList.remove('none'); // Hiện thẻ div
+            hiddenDiv.textContent = `Còn ${tTurns} lượt`; tTurns--;
+            setTimeout(() => {
+                setTimeout(() => {
+                    hiddenDiv.classList.add('none');
+                    hiddenDiv.style.opacity = '1' // Thêm lớp ẩn trở lại
+                }, 1000);
+                hiddenDiv.style.opacity = '0'
+            }, 2000);
+        }
+    }
+</script>
+
+<!-- ingame battle nè -->
+     <script>
+// Nút mở và đóng bảng kỹ năng
+const skillButton = document.getElementById('skill-button');
+const skillModal = document.getElementById('skill-modal');
+const closeSkill = document.getElementById('close-skill');
+
+skillButton.addEventListener('click', () => {
+    skillModal.style.display = 'flex';
+});
+
+closeSkill.addEventListener('click', () => {
+    skillModal.style.display = 'none';
+});
+
+// Nút thoát
+const exitButton = document.getElementById('exit-button');
+const exitDialog = document.getElementById('exit-dialog');
+const exitConfirm = document.getElementById('exit-confirm');
+const exitCancel = document.getElementById('exit-cancel');
+
+exitButton.addEventListener('click', () => {
+    exitDialog.style.display = 'flex';
+});
+
+exitConfirm.addEventListener('click', () => {
+    // window.close(); // Chỉ hoạt động trong một số trường hợp
+    exitDialog.style.display = 'none';
+    characterInGame.currentHealth = 0; 
+    display_InfoChar_Mon(); checkBattleResult()
+});
+
+exitCancel.addEventListener('click', () => {
+    exitDialog.style.display = 'none';
+});
+
+</script>
+
+<!-- quái vật tự đi -->
+ <script>
+     let isMovingMon = false; // Trạng thái chuyển động
+
+        // Hàm di chuyển hình vuông
+        function moveSquare() {
+            const allMon = document.querySelectorAll(".enemy")
+            const allMonMini = document.querySelectorAll(".enemyMini")
+
+            allMon.forEach(i=>{
+                var loop, stepsRemain = 0, direct = 0
+                loop = setInterval(function() {
+                    if (i.isGo == "end") {clearInterval(loop)}
+                    else if (i.isGo == true) {
+                        if (stepsRemain == -1) {
+                            // direct = Math.floor(Math.random() * 4) + 1;
+                            direct = Math.floor(Math.random() * 4) + 1;
+                            stepsRemain = Math.floor(Math.random() * 4) + 15;   
+                        }
+                        stepsRemain--
+                        if (moveCharacter2(i, direct)) {stepsRemain = -1}
+                    }
+                }, 40)
+            })
+        }
+
+        // Xử lý khi nhấn nút
+        function mimi() {
+            if (!isMovingMon) {
+                // Bắt đầu di chuyển
+                const allMon = document.querySelectorAll(".enemy")
+
+            allMon.forEach(i=>i.isGo = true)
+                isMovingMon = true;
+                moveSquare()
+            } else {
+                // Dừng di chuyển
+                isMovingMon = false;
+                const allMon = document.querySelectorAll(".enemy")
+
+            allMon.forEach(i=>i.isGo = 'end')
+            }
+        }
+
+
+
+
+
+
+
+              // ------------------ go
+     // Lấy tất cả các vật cản có class "obstacle"
+    let moving2 = { left: false, right: false, up: false, down: false };
+    const speed2 = 2; // Điều chỉnh tốc độ
+
+    // Hàm di chuyển nhân vật
+    function moveCharacter2(mon, direction) {
+        const container = document.querySelector('.map');
+        const containCon = document.querySelector('.miniMapp');
+            const character = mon
+            const miniChar = document.querySelector(`.enemyMini${mon.dataset.codeEnemy}`)
+            const characterRect = character.getBoundingClientRect();
+            let containerRect = container.getBoundingClientRect();
+
+            switch (direction) {
+                case 4:
+                    if (characterRect.left > containerRect.left) {
+                        var x = character.offsetLeft - speed2
+                        character.style.left = x + 'px';
+                        miniChar.style.left = x/five + 'px';
+                    } else {
+                    // if (characterRect.left <= containerRect.left) {
+                        character.style.left = '2px'; 
+                        miniChar.style.left = 2/five + 'px'; 
+                    }
+                    break;
+                case 2:
+                    {
+                    if (characterRect.right < containerRect.right) {
+                        var x = character.offsetLeft + speed2
+                        character.style.left = x + 'px';
+                        miniChar.style.left = x/five + 'px';
+
+                    }
+                    if (characterRect.right >= containerRect.right) {
+                        var x = container.offsetWidth -character.offsetWidth - 4
+                        character.style.left = x + 'px'
+                        miniChar.style.left = x/five -4 + 'px'
+                    }
+                    break;
+                }
+                case 1:
+                    if (characterRect.top > containerRect.top) {
+                        var x = character.offsetTop - speed2 
+                        character.style.top = x + 'px';
+                        miniChar.style.top = x/five + 'px';
+                    }
+                    if (characterRect.top <= containerRect.top) {
+                        character.style.top = 2 + 'px';
+                        miniChar.style.top = 2/five + 'px'; 
+                    }
+                    break;
+                case 3:
+                    if (characterRect.bottom < containerRect.bottom) {
+                        var x = character.offsetTop + speed2
+                        character.style.top = x + 'px';
+                        miniChar.style.top = x/five + 'px';
+                    }
+                    if (characterRect.bottom >= containerRect.bottom) {
+                        var x = container.offsetHeight - character.offsetHeight - 4
+                        character.style.top = x + 'px'
+                        miniChar.style.top = x/five -4 + 'px';
+                    }
+                    break;
+            }
+            if (checkCollision2(mon)) return true   
+    }
+
+    function checkCollision2(mon) {
+        const character = mon
+        const characterRect = character.getBoundingClientRect();
+        const obstacles = document.querySelectorAll('.obstacle');
+    for (let obstacle of obstacles) {
+        let obstacleRect = obstacle.getBoundingClientRect();
+
+        // Kiểm tra va chạm
+        if (!(characterRect.right < obstacleRect.left || 
+              characterRect.left > obstacleRect.right || 
+              characterRect.bottom < obstacleRect.top || 
+              characterRect.top > obstacleRect.bottom)) {
+                var y = mon.dataset.codeEnemy
+            var miniChar = document.querySelector(`.enemyMini${y}`)
+              
+            // Nếu va chạm từ bên trái (cạnh phải của nhân vật chạm cạnh trái của vật thể)
+            if (characterRect.right >= obstacleRect.left && characterRect.left < obstacleRect.left) {
+                character.style.left = (obstacle.offsetLeft - character.offsetWidth - 2) + 'px';
+                miniChar.style.left = obstacle.offsetLeft/five - miniChar.offsetWidth+ 'px'
+                
+            }
+            // Nếu va chạm từ bên phải (cạnh trái của nhân vật chạm cạnh phải của vật thể)
+            else if (characterRect.left <= obstacleRect.right && characterRect.right > obstacleRect.right) {
+                character.style.left = (obstacle.offsetLeft + obstacle.offsetWidth + 2) + 'px';
+                miniChar.style.left = obstacle.offsetLeft/five + obstacle.offsetWidth/five+ 'px'
+                
+            }
+            // Nếu va chạm từ phía trên (cạnh dưới của nhân vật chạm cạnh trên của vật thể)
+            if (characterRect.bottom >= obstacleRect.top && characterRect.top < obstacleRect.top) {
+                character.style.top = (obstacle.offsetTop - character.offsetHeight - 2) + 'px';
+                miniChar.style.top = obstacle.offsetTop/five - miniChar.offsetHeight + 'px'
+            }
+            // Nếu va chạm từ phía dưới (cạnh trên của nhân vật chạm cạnh dưới của vật thể)
+            else if (characterRect.top <= obstacleRect.bottom && characterRect.bottom > obstacleRect.bottom) {
+                character.style.top = (obstacle.offsetTop + obstacle.offsetHeight + 2) + 'px';
+                miniChar.style.top = obstacle.offsetTop/five + obstacle.offsetHeight/five + 'px'
+            }
+
+            return true; // Nếu có va chạm, trả về true
+        }
+    } 
+    return false;
+}
+
+
+ </script>
+
+ <!-- lớp phủ đen  -->
+  <script>
+    const overlay = document.getElementById('overlay');
+    const spinner = document.getElementById('spinner');
+        function showOverLay(x) {
+
+            // Bắt đầu hiện lớp phủ đen
+            // overlay.classList.remove("none")
+            overlay.classList.add('fade-in');
+            // spinner.classList.remove("none")
+            spinner.classList.add('fade-in')
+            // Sau khi lớp phủ đen hiện lên (1s), giữ lớp đen trong 3 giây
+            setTimeout(function() {
+                if (x==1) {
+        document.querySelector(".inGameBattle").classList.remove("none")
+                } else if (x==2) {
+                    document.querySelector(".inGameBattle").classList.add("none")
+                }
+               
+                setTimeout(function () {
+                    overlay.classList.remove('fade-in');
+                    overlay.classList.add('fade-out');
+
+                    spinner.classList.remove('fade-in');
+                    spinner.classList.add('fade-out');
+                    // Sau khi lớp đen mờ (1s), ẩn spinner
+            
+                    setTimeout(function () {
+                       
+                        // overlay.classList.add("none")
+                        // spinner.classList.add("none")// Ẩn spinner
+                        overlay.classList.remove('fade-out');
+                        spinner.classList.remove('fade-out');
+                        display_InfoChar_Mon()
+                        if (x == 1) startGame()
+                    }, 1000);
+                }, 500); 
+            }, 1500); // Sau 1 giây
+        }
+  </script>
+<!-- gọi hàm khi vào game -->
+    <script>
+        updateCharacterInfo(); createMaps()
+        mimi(); // Cập nhật trạng thái liên tục để kiểm tra quái vật có lại gần không
+    // Kiểm tra mỗi 100ms
+    var checkFightBoard, checkFightPoint = 0
+    function checkFight() {
+        if (checkFightPoint == 0) {
+            checkFightPoint++
+            checkFightBoard =  setInterval(() => {checkProximity()}, 100); 
+        } else {
+            checkFightPoint--; // monsterPresent = 0
+            monstersNear = []; currentMonsterIndex = 0; 
+            monsterSelectedManually = false; hideMonsterInfo();
+            clearInterval(checkFightBoard)
+        }
+    }
+    checkFight()
+    // document.querySelector(".inGameBattle").classList.remove("none")
+    </script>
+</body>
+<!-- <div lưu ý>
+
+    board[2][4].src = 'ảnh/sword.png'
+board[4][4].src = 'ảnh/sword.png'
+board[3][5].src = 'ảnh/sword.png'
+     1.3.3 
+    .controls-button:hover {
+        background-color: #0056b3;
+    } 
+    function addUniqueValue(array, value) {
+        if (!array.includes(value)) {
+            array.push(value);
+        }
+    } 
+    Math.floor(Math.random() * 4) + 1; 
+    let top = parseInt(squareMon.style.top) || 0; 
+    
+    
+    width: 60px;
+        height: 60px;
+        background-color: #333;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center; 
+    
+        .modal, .blackLayout { 
+        console.log(window.getComputedStyle(overlay).opacity) 
+    
+        ko ngoặc cho 1 dòng lệnh, là nó return luôn hả 
+        clip-path: inset(0 0 0 0 round 3px); 
+</div> -->
+    <script src="js/4_khai_báoe.js"></script>
+    <script src="js/5_battlePoint.js"></script>
+    <script src="js/toggleMenu.js"></script>
+
+</html>
+
+

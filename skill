@@ -1,0 +1,44 @@
+  <!-- Skill Board chứa tiêu đề và các kỹ năng -->
+<!--<div class="skillBoard">
+    Tiêu đề Kĩ Năng 
+    <div class="skillName">Kĩ Năng</div>
+
+    Skill Box chứa ngôi sao và các kỹ năng -->
+    <div class="skillBox">
+        <!-- SVG ngôi sao -->
+        <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="100,10 40,198 190,78 10,78 160,198" 
+                     fill="none" stroke="black" stroke-width="2" />
+        </svg>
+
+        <!-- Kĩ năng 1 -->
+        <div class="skill-box" style="top: 0px; left: 50px;">
+            <div class="skillPic"></div>
+            <div class="skill-text">Kĩ Năng 1</div>
+        </div>
+
+        <!-- Kĩ năng 2 -->
+        <div class="skill-box" style="top: 150px; left: 20px;">
+            <div class="skillPic"></div>
+            <div class="skill-text">Kĩ Năng 2</div>
+        </div>
+
+        <!-- Kĩ năng 3 -->
+        <div class="skill-box" style="top: 150px; left: 140px;">
+            <div class="skillPic"></div>
+            <div class="skill-text">Kĩ Năng 3</div>
+        </div>
+
+        <!-- Kĩ năng 4 -->
+        <div class="skill-box" style="top: 80px; left: 0px;">
+            <div class="skillPic"></div>
+            <div class="skill-text">Kĩ Năng 4</div>
+        </div>
+
+        <!-- Kĩ năng 5 -->
+        <div class="skill-box" style="top: 80px; left: 160px;">
+            <div class="skillPic"></div>
+            <div class="skill-text">Kĩ Năng 5</div>
+        </div>
+    </div>
+</div>-->

@@ -1,0 +1,374 @@
+/* menu + */
+/* menu */
+.menuContainer {
+    position: absolute;
+    z-index: 3;
+    background: #f62d2d;
+    width: 64%;
+    opacity: 0;
+    height: 50%;
+    border: 2px solid #000;
+    padding: 7px 3px 7px 7px;
+    overflow-y: auto;
+    /* Hiển thị thanh cuộn dọc nếu cần */
+    overflow-x: hidden;
+    /* Ẩn thanh cuộn ngang */
+    box-sizing: border-box;
+    border-radius: 2%;
+    /* Định dạng thanh cuộn dọc */
+    scrollbar-width: thin;
+    /* Chỉ định thanh cuộn mỏng */
+    scrollbar-color: #00f #f0f0;
+    /* transition: opacity 0.5s ease; */
+
+    transform: scale(0.8);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    /* Màu viên cuộn và nền thanh cuộn */
+}
+.optionDevilContainer {
+    position: absolute;
+    z-index: 3;
+    background: #f62d2d;
+    width: 42%;
+    opacity: 0;
+    height: 166px;
+    border: 2px solid #000;
+    padding: 7px 0px 7px 7px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: 6px;
+    box-sizing: border-box;
+    border-radius: 2%;
+    scrollbar-width: thin;
+    scrollbar-color: #00f #f0f0;
+    /* transition: opacity 0.5s ease; */
+    transform: scale(0.8);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.btnToggleMenu {
+    display: flex;
+    /* justify-content: center; */
+    align-items: center;
+    height: 9%;
+    position: absolute;
+    width: 17%;
+    background-color: #4CAF50;
+    color: white;
+    border: 2px solid #000;
+    border-radius: 5px;
+    font-size: 15px;
+    left: 4%;
+    bottom: 7%;
+    z-index: 2;
+    text-align: center
+}
+
+
+.optionDevilChild {
+    border-radius: 5px;
+    width: 100%;
+    height: 29px;
+    margin-bottom: 7px;
+    border: 1px solid #000;
+    display: flex;
+    align-items: center;
+    /* Căn giữa chữ theo chiều dọc */
+    justify-content: center;
+}
+.menuChild {
+    border-radius: 5%;
+    width: 100%;
+    height: 19%;
+    margin-bottom: 7px;
+    border: 1px solid #000;
+    display: flex;
+    align-items: center;
+    /* Căn giữa chữ theo chiều dọc */
+    justify-content: center;
+}
+
+.menuChild:last-child {
+    margin-bottom: 0
+}
+.optionDevilChild:last-child {
+    margin-bottom: 0
+}
+
+
+/* infor box character */
+.characterContainer {
+    width: 60%;
+    height: 17.4%;
+    padding: 6px;
+    border: 2px solid #000;
+    position: absolute;
+    margin-bottom: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #333;
+    /* color: black; */
+    color: white;
+    border-radius: 4px;
+    font-size: 12px;
+    top: -1px;
+    left: -1px;
+    /* border: 2px solid gold; */
+    /* background-color: #fff3cd; */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* CSS cho khung chứa và thanh kinh nghiệm */
+
+.exp-bar-character {
+    height: 7.6%;
+    position: absolute;
+    background-color: green;
+    width: 0%;
+    /* bottom: 2px; */
+    transition: width 0.3s;
+}
+
+.char-detail {
+    margin: 5px 0;
+    /* Khoảng cách giữa các thông tin */
+}
+
+/* Style cho hình vuông bên trái */
+.character-avatar {
+    width: 60px;
+    height: 60px;
+    background-color: #333;
+    border: 1px solid #000;
+    margin-right: 7px;
+}
+
+
+
+/* bảng tướng */
+/* Cơ bản cho bảng và giao diện cuộn */
+#characterTableContainer {
+    width: 98%;
+    max-height: 64%;
+    overflow-y: auto;
+    border: 1px solid black;
+    padding: 5px;
+    position: absolute;
+    top: 50%;
+    font-size: 12px;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    z-index: 3;
+    background-color: white;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.flyBtnDevil {
+    background: #af49f7;
+    box-shadow: inset 0 0 10px #25ff5e;
+    /* color: #000000; */
+    animation: slowUpAndDown 1.3s ease-in-out infinite;
+}
+
+@keyframes slowUpAndDown {
+
+    0%,
+    100% {
+        transform: translateY(0);
+        /* Vị trí ban đầu */
+    }
+
+    50% {
+        transform: translateY(-2px);
+        /* Di chuyển lên 5px */
+    }
+}
+
+/* Đã hiện bảng */
+#characterTableContainer.active {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Nền đen mờ */
+#overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: none;
+    z-index: 2;
+    /* Phía dưới bảng */
+}
+
+#overlay.active {
+    display: block;
+}
+
+.haha {
+    display: flex;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+td {
+    padding: 6px;
+    width: 50%;
+    vertical-align: top;
+    border: 1px solid black;
+}
+
+/* Ô chưa triệu hồi (màu tím) */
+.inactive {
+    background-color: purple;
+    color: white;
+    text-align: center;
+}
+
+/* Ô đã triệu hồi (màu xanh) */
+.active {
+    background-color: lightgreen;
+    text-align: center;
+}
+
+.devilContainer {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    pointer-events: none;
+    position: relative;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background-color: lightgray;
+    position: relative;
+    margin-top: 10px;
+}
+
+.progress-fill {
+    background-color: gold;
+    height: 100%;
+    width: 0;
+}
+
+.progress-text {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+    color: black; 
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    background-color: #ccc;
+    margin-right: 5px; 
+}
+
+
+.level-star-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+
+.level {
+    float: left; 
+}
+
+.star {
+    float: right;
+    color: gold; 
+}
+
+/* Bảng hiển thị */
+#popup {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 82%;
+    height: 25%;
+    background-color: white;
+    border: 2px solid black;
+    z-index: 5;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+/* Khi bảng hiển thị */
+#popup.show {
+    display: block;
+    opacity: 1;
+}
+
+/* Hiệu ứng mờ dần */
+#popup.fade-out {
+    opacity: 0;
+}
+
+/* Khi bảng hiển thị */
+#popup.show {
+    display: block;
+    opacity: 1;
+}
+
+/* Hiệu ứng mờ dần */
+#popup.fade-out {
+    opacity: 0;
+}
+
+/* CSS cho thẻ div thông báo */
+#confirmationDialogDevil {
+    position: absolute;
+    top: 50%;
+    width: 70%;
+    left: 50%;
+    font-size: 12px;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid black;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.3s ease-in-out;
+    opacity: 0;
+    z-index: 1002;
+    text-align: center;
+}
+
+/* Nút */
+.btnDevil {
+    margin: 5px;
+    padding: 10px 20px;
+    border: none;
+    background-color: lightblue;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btnDevil:hover {
+    background-color: deepskyblue;
+}
+.tickDevil {
+    width: 10px;
+    border: 3px solid red;
+    height: 10px;
+    background-color: blue;
+    position: absolute;
+    bottom: -3px;
+    right: -1px;
+    box-sizing: content-box;
+}
