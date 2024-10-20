@@ -37,6 +37,18 @@
     opacity: 0;
     transition: opacity 0.3s ease;
 }
+#sBlackOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    z-index: 50; /* Phía dưới bảng */
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    
+}
 
 
 
@@ -49,3 +61,7 @@
     border: 2px solid #000;
     top: -2px;
                     }
+
+.clickDevil_ItemBoard {
+    background-color: #90acee !important;
+}

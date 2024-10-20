@@ -5,7 +5,6 @@
     z-index: 3;
     background: #f62d2d;
     width: 64%;
-    opacity: 0;
     height: 50%;
     border: 2px solid #000;
     padding: 7px 3px 7px 7px;
@@ -20,14 +19,15 @@
     /* Chỉ định thanh cuộn mỏng */
     scrollbar-color: #00f #f0f0;
     /* transition: opacity 0.5s ease; */
-
+    
+    opacity: 0;
     transform: scale(0.8);
     transition: opacity 0.3s ease, transform 0.3s ease;
     /* Màu viên cuộn và nền thanh cuộn */
 }
 .optionDevilContainer {
     position: absolute;
-    z-index: 3;
+    z-index: 4;
     background: #f62d2d;
     width: 42%;
     opacity: 0;
@@ -222,6 +222,7 @@ td {
     width: 50%;
     vertical-align: top;
     border: 1px solid black;
+    transition: background-color 0.3s ease;
 }
 
 /* Ô chưa triệu hồi (màu tím) */

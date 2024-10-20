@@ -476,6 +476,7 @@ function resetBoard() {
         document.querySelector(".boxMonIn_Game").classList.remove("colorTurn", "flyBtn")
     }
     function bling(id) {
+        overlay.classList.remove("none");
         document.querySelector(`.${id}`).classList.add('blink'); // Thêm class để bắt đầu hiệu ứng chớp nháy
         document.querySelector(`.${id}`).style.transition = 'opacity 0.5s ease'; // Đặt transition thành 0.5s
         setTimeout(()=>{

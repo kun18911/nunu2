@@ -184,6 +184,7 @@
       <link rel="stylesheet" href="css/base.css">
       <link rel="stylesheet" href="css/menu.css">
       <link rel="stylesheet" href="css/fightMonster.css">
+      <link rel="stylesheet" href="css/hanhtrang.css">
 </head>
 <body>
      <!-- Container bao quanh điện thoại để căn giữa màn hình -->
@@ -197,20 +198,21 @@
                 <div class="btnToggleMenu">Tùy Chọn</div>
                 <!-- menu -->
                 <div class="menuContainer none">
-                    <div class="menuChild">Hành trang</div>
+                    <div class="menuChild" id="menuItemGear">Hành trang</div>
                     <div class="menuChild" id="menuItemHero">Tướng</div>
                     <div class="menuChild">Tiềm năng</div>
                     <div class="menuChild">Bản thân</div>
                     <div class="menuChild">Bản đồ</div>
                 </div>    
                 <!-- Tùy chọn tướng -->
-                <div class="optionDevilContainer">
+                <div class="optionDevilContainer none">
                     <div class="optionDevilChild">tham chiến</div>
                     <div class="optionDevilChild">Trang bị</div>
                     <div class="optionDevilChild">Tiềm năng</div>
                     <div class="optionDevilChild">Kĩ Năng</div>
                     <div class="optionDevilChild">Thông Tin</div>
                 </div>  
+                <!-- bảng chọn tướng -->
                 <div style="width:100%; height: 100%">
                     <!-- Bảng tướng -->
                     <div id="characterTableContainer" class="none">
@@ -229,6 +231,34 @@
                         <button class="btnDevil" id="noButtonDevil">Không</button>
                     </div>
                 
+                </div>
+
+                <!-- Hành trang-->
+                <div class="containerDevil none">
+                    <div class="headerDevil" style="margin-left: 11px;">Hành trang</div>
+            
+                    <!-- Option Select -->
+                    <select id="categorySelectDevil">
+                        <option value="allDevil">Tất cả</option>
+                        <option value="weaponDevil">Vũ khí</option>
+                        <option value="armorDevil">Giáp</option>
+                        <option value="gemDevil">Ngọc</option>
+                        <option value="potionDevil">Potion</option>
+                    </select>
+            
+                    <!-- Buttons to Add/Remove Cells -->
+                    <!-- <div class="buttonsDevil"> -->
+                        <button id="addCellBtnDevil">Thêm ô</button>
+                        <!-- <button id="removeCellBtn" style="display: none;">Xóa ô cuối</button> -->
+                    <!-- </div> -->
+            
+                    <!-- Grid for items -->
+                    <div class="containerDevil2">
+                        <div class="gridDevil">
+                        </div>
+                        
+                    </div>
+                    <div class="containerDevil3"></div>
                 </div>
                 <!-- Khung hiển thị thông tin nhân vật -->
                 <div class="characterContainer">
@@ -719,8 +749,7 @@ fade-out2 {
             transform: translate(-50%, -50%);
             opacity: 0;
             transition: opacity 1s ease-in-out;
-            z-index: 2;
-            visibility: hidden;
+            z-index: 51;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -753,6 +782,7 @@ fade-out2 {
 
 
                 <div id="blackOverlay" class="none"></div>
+                <div id="sBlackOverlay" class="none"></div>
             </div>
             
     </div>
@@ -856,7 +886,7 @@ fade-out2 {
                 exits: [
                     { 
                         size: { width: 50, height: 50 }, 
-                        position: { top: 300, left: 300 },  mapI: 2, top: 50, left: 50 
+                        position: { top: 221, left: 100 },  mapI: 2, top: 50, left: 50 
                     }
                 ]
             },
@@ -877,17 +907,83 @@ fade-out2 {
                     }
                 ],
                 enemies: [
-                    { 
-                        size: { width: 50, height: 50 }, 
-                        name: "quái Vật 1",
-                        position: { top: 200, left: 200 }, color: 'black' 
+                     {
+                        level: 1, experience: 0, id:0, 
+
+                        armor: 0, maxMana: 300, mana: 0, // in-game
+
+                        hpGear: 0, dameGear: 0, armorGear: 0, // trang bị
+
+                        get hpLv() { return 100 + (this.level - 1) * 20 },
+                        get dameLv() { return 20 + (this.level - 1) * 10 },
+                        get armorLv() { return 3 + (this.level - 1) * 2 },
+                        get maxHealth() { return this.hpGear + this.hpLv },
+                        get maxDame() { return this.dameGear + this.dameLv },
+                        get maxArmor() { return this.armorGear + this.armorLv },
+                        currentHealth: 50,
+
+                        // Skill 1: Trừ 10 máu của quái vật
+                        skill1(characterInGame) {
+                            if (monsterInGame.mana >= 10) {
+                                monsterInGame.mana -= 10; // Giảm mana
+                                attackInGame(10, characterInGame)
+                            }
+                        },
+                        skill2(characterInGame) {
+                            if (monsterInGame.mana >= 10) {
+                                monsterInGame.mana -= 20; // Giảm mana
+                                attackInGame(20, characterInGame)
+                            }
+                        },
+                        skill3(characterInGame) {
+                            if (monsterInGame.mana >= 10) {
+                                monsterInGame.mana -= 30; // Giảm mana
+                                attackInGame(30, characterInGame)
+                            }
+                        },
+                        size: { width: 50, height: 50 }, lv: 5,
+                        name: "quái Vật HĂM",
+                        position: { top: 255, left: 123 }, color: 'black'
                     },
-                    { 
-                        size: { width: 50, height: 50 }, 
-                        name: "quái Vật 2",
-                        position: { top: 200, left: 200 }, color: 'black' 
-                    }
-                ],
+                    {
+                        level: 1, experience: 0, id: 1,
+
+                        armor: 0, maxMana: 300, mana: 0, // in-game
+
+                        hpGear: 0, dameGear: 0, armorGear: 0, // trang bị
+
+                        get hpLv() { return 100 + (this.level - 1) * 20 },
+                        get dameLv() { return 20 + (this.level - 1) * 10 },
+                        get armorLv() { return 3 + (this.level - 1) * 2 },
+                        get maxHealth() { return this.hpGear + this.hpLv },
+                        get maxDame() { return this.dameGear + this.dameLv },
+                        get maxArmor() { return this.armorGear + this.armorLv },
+                        currentHealth: 50,
+
+                        // Skill 1: Trừ 10 máu của quái vật
+                        skill1(characterInGame) {
+                            if (monsterInGame.mana >= 10) {
+                                monsterInGame.mana -= 10; // Giảm mana
+                                attackInGame(10, characterInGame)
+                            }
+                        },
+                        skill2(characterInGame) {
+                            if (monsterInGame.mana >= 10) {
+                                monsterInGame.mana -= 20; // Giảm mana
+                                attackInGame(20, characterInGame)
+                            }
+                        },
+                        skill3(characterInGame) {
+                            if (monsterInGame.mana >= 10) {
+                                monsterInGame.mana -= 30; // Giảm mana
+                                attackInGame(30, characterInGame)
+                            }
+                        },
+                        size: { width: 50, height: 50 }, lv: 2,
+                        name: "quái Vật HAH",
+                        position: { top: 200, left: 270 }, color: 'black'
+                     }
+                 ],
                 exits: [
                     { 
                         size: { width: 50, height: 50 }, 
@@ -911,10 +1007,44 @@ fade-out2 {
                     }
                 ],
                 enemies: [
-                    { 
-                        size: { width: 50, height: 50 }, 
-                        position: { top: 200, left: 200 }, color: 'black' 
-                    }
+                {
+                        level: 1, experience: 0, id: 1,
+
+                        armor: 0, maxMana: 300, mana: 0, // in-game
+
+                        hpGear: 0, dameGear: 0, armorGear: 0, // trang bị
+
+                        get hpLv() { return 100 + (this.level - 1) * 20 },
+                        get dameLv() { return 20 + (this.level - 1) * 10 },
+                        get armorLv() { return 3 + (this.level - 1) * 2 },
+                        get maxHealth() { return this.hpGear + this.hpLv },
+                        get maxDame() { return this.dameGear + this.dameLv },
+                        get maxArmor() { return this.armorGear + this.armorLv },
+                        currentHealth: 50,
+
+                        // Skill 1: Trừ 10 máu của quái vật
+                        skill1(characterInGame) {
+                            if (monsterInGame.mana >= 10) {
+                                monsterInGame.mana -= 10; // Giảm mana
+                                attackInGame(10, characterInGame)
+                            }
+                        },
+                        skill2(characterInGame) {
+                            if (monsterInGame.mana >= 10) {
+                                monsterInGame.mana -= 20; // Giảm mana
+                                attackInGame(20, characterInGame)
+                            }
+                        },
+                        skill3(characterInGame) {
+                            if (monsterInGame.mana >= 10) {
+                                monsterInGame.mana -= 30; // Giảm mana
+                                attackInGame(30, characterInGame)
+                            }
+                        },
+                        size: { width: 50, height: 50 }, lv: 2,
+                        name: "quái Vật HAH",
+                        position: { top: 200, left: 270 }, color: 'black'
+                     }
                 ],
                 exits: [
                     { 
@@ -958,7 +1088,6 @@ fade-out2 {
     </script>
     <!-- map -->
     <script>
-        let currentMapIndex = 1;
         // Dữ liệu cho các map
         var five= 5
 
@@ -1179,7 +1308,7 @@ fade-out2 {
                         const newTop = exit.dataset.top, newLeft = exit.dataset.left;  // Lấy giá trị từ data-symbol2
 
                     // Đặt vị trí map và tọa độ nhân vật
-                    characterr.position = { top: parseInt(newTop), left: parseInt(newLeft) };  // Đặt vị trí khởi đầu cho map mới
+                    characterr.position = { top: parseInt(newTop), left: parseInt(newLeft)};  // Đặt vị trí khởi đầu cho map mới
                         goExit++
                         return true
                 }
@@ -1200,10 +1329,8 @@ fade-out2 {
         const container = document.querySelector('.map');
         const containCon = document.querySelector('.miniMapp');
         function checkExitAndObstacle() {
-            if (checkCollisionWithExits() && goExit != 0) {
-                setTimeout(function () {
-                    stopCharacter(); goExit = 0; createMaps();
-                }, 1000)
+            if (checkCollisionWithExits() && goExit == 1) {
+                endMap(); 
             }
             if (checkCollision()) {
                 // if (checkCollision(characterRect)) {// ??? sao ko truyền đc 
@@ -1451,6 +1578,7 @@ fade-out2 {
 
         document.querySelector(".boxMeIn_Game").classList.remove("colorTurn", "flyBtn")
         document.querySelector(".boxMonIn_Game").classList.remove("colorTurn", "flyBtn")
+        overlay.classList.remove("none");
         setTimeout(()=>{showOverLay(1); checkFight()}, 1000)
     });
     
@@ -1746,41 +1874,44 @@ exitCancel.addEventListener('click', () => {
 
  <!-- lớp phủ đen  -->
   <script>
-    const overlay = document.getElementById('overlay');
-    const spinner = document.getElementById('spinner');
+    // const overlay = document.getElementById('overlay');
+    const overlay = document.getElementById('sBlackOverlay');
+
+    
+        const spinner = document.getElementById('spinner');
         function showOverLay(x) {
-
-            // Bắt đầu hiện lớp phủ đen
-            // overlay.classList.remove("none")
-            overlay.classList.add('fade-in');
-            // spinner.classList.remove("none")
-            spinner.classList.add('fade-in')
             // Sau khi lớp phủ đen hiện lên (1s), giữ lớp đen trong 3 giây
-            setTimeout(function() {
-                if (x==1) {
-        document.querySelector(".inGameBattle").classList.remove("none")
-                } else if (x==2) {
-                    document.querySelector(".inGameBattle").classList.add("none")
-                }
-               
-                setTimeout(function () {
-                    overlay.classList.remove('fade-in');
-                    overlay.classList.add('fade-out');
-
-                    spinner.classList.remove('fade-in');
-                    spinner.classList.add('fade-out');
-                    // Sau khi lớp đen mờ (1s), ẩn spinner
             
+            setTimeout(() => {overlay.style.opacity = 1}, 10)
+            spinner.classList.remove("none");
+            setTimeout(() => {spinner.style.opacity = 1}, 10); 
+
+            setTimeout(function () {
+                if (x == 1) {
+                    document.querySelector(".inGameBattle").classList.remove("none")
+                } else if (x == 2) {
+                    document.querySelector(".inGameBattle").classList.add("none")
+                } else if (x == 3) {
+                    goExit = 0; createMaps();
+                    updateCharacterInfo(); 
+                    setTimeout(()=>{
+                        mimi();
+                    checkFight()
+                    }, 3000)
+                }
+
                     setTimeout(function () {
-                       
-                        // overlay.classList.add("none")
-                        // spinner.classList.add("none")// Ẩn spinner
-                        overlay.classList.remove('fade-out');
-                        spinner.classList.remove('fade-out');
-                        display_InfoChar_Mon()
-                        if (x == 1) startGame()
+                    overlay.style.opacity = 0
+                    spinner.style.opacity = 0
+                    // Sau khi lớp đen mờ (1s), ẩn spinner
+
+                    setTimeout(function () {
+                        overlay.classList.add("none")
+                        spinner.classList.add("none")
+
+                        if (x == 1) {startGame(); display_InfoChar_Mon()}
                     }, 1000);
-                }, 500); 
+                }, 500);
             }, 1500); // Sau 1 giây
         }
   </script>
@@ -1840,7 +1971,19 @@ board[3][5].src = 'ảnh/sword.png'
     <script src="js/4_khai_báoe.js"></script>
     <script src="js/5_battlePoint.js"></script>
     <script src="js/toggleMenu.js"></script>
-
+    <script src="js/hanhtrang.js"></script>
+<script>
+    function endMap() {
+        overlay.classList.remove("none");
+        setTimeout(()=> {
+            mimi(); checkFight()
+            stopCharacter(); 
+            setTimeout(()=> {showOverLay(3)}, 500)
+        }, 700)
+    }
+</script>
 </html>
+<!-- console.log() -->
 
 
+<!-- #90acee -->

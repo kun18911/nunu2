@@ -3,6 +3,7 @@ const toggleMenuButton = document.querySelector('.btnToggleMenu');
 const blackOverlay = document.getElementById('blackOverlay');
 const menuContainer = document.querySelector('.menuContainer');
 const menuBoardHero = document.getElementById('characterTableContainer');
+const optionDevilContainer = document.querySelector('.optionDevilContainer');
 
 var currentBoard = 0
 function toggleMenu() {
@@ -30,14 +31,33 @@ function toggleMenu() {
                 menuContainer.style.transform = 'scale(0.8)'
             }, 300)
         } else if (currentBoard == "menuBoardHero") {
-            console.log(isActive)
             currentBoard = 'menu'
             menuBoardHero.style.opacity = 0
             setTimeout(() => {
                 menuBoardHero.classList.add('none'); 
                 menuBoardHero.style.transform = 'translate(-50%, -50%) scale(0.8)'
             }, 300);
+        } else if (currentBoard == 'optionDevilBoard') {
+            currentBoard = "menuBoardHero"
+            optionDevilContainer.style.opacity = 0
+            devilItem.classList.remove("clickDevil_ItemBoard")
+            setTimeout(() => {
+                optionDevilContainer.classList.add("none")
+                optionDevilContainer.style.transform = 'scale(0.8)'
+            }, 300);
+            document.getElementById("blackOverlay").style.zIndex = zIndexOverlay
+        } else if (currentBoard == 'menuBoardGear') {
+            currentBoard = 'menu'
+            menuBoardGear.style.opacity = 0
+            setTimeout(() => {
+                menuBoardGear.classList.add("none")
+                menuBoardGear.style.transform = 'scale(0.8)'
+            }, 300);
+            // document.getElementById("blackOverlay").style.zIndex = zIndexOverlay
         }
+
+
+
     }
     // toggleMenuButton.textContent = isActive ? 'Quay lại':'Tùy chọn' 
 }
@@ -175,6 +195,7 @@ if (!character.tile) {
         </div>
     </div>
     `;
+    cell.addEventListener('click', ()=>optionDevilBoard(cell))
 }
 }
 
@@ -257,6 +278,21 @@ function summonCharacter(character) {
     }
 }
 
+let zIndexOverlay = 0
+let devilItem = 0
+function optionDevilBoard(cell) {
+    devilItem = cell
+    cell.classList.add("clickDevil_ItemBoard")
+    setTimeout(() => {
+        zIndexOverlay = window.getComputedStyle(document.getElementById("blackOverlay")).zIndex;
+        document.getElementById("blackOverlay").style.zIndex = 3
+        optionDevilContainer.classList.remove("none")
+        optionDevilContainer.style.transform = 'scale(1)'
+        setTimeout(() => optionDevilContainer.style.opacity = 1, 10)
+        currentBoard = 'optionDevilBoard'
+    }, 300)
+}
+
 
 document.getElementById('menuItemHero').addEventListener('click', function() {
     menuBoardHero.classList.remove('none'); createTable();
@@ -264,6 +300,16 @@ document.getElementById('menuItemHero').addEventListener('click', function() {
     setTimeout(() => {
         menuBoardHero.style.opacity = 1
         menuBoardHero.style.transform = 'translate(-50%, -50%) scale(1)'
+    }, 10);
+})
+var menuBoardGear = document.querySelector(".containerDevil")
+document.getElementById('menuItemGear').addEventListener('click', function() {
+    menuBoardGear.classList.remove('none'); createGear()
+    checkScroll();
+    currentBoard = 'menuBoardGear'
+    setTimeout(() => {
+        menuBoardGear.style.opacity = 1
+        menuBoardGear.style.transform = 'scale(1)'
     }, 10);
 })
 

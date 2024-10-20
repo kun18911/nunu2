@@ -1,0 +1,108 @@
+
+.containerDevil {
+    z-index: 3;
+    position: absolute;
+    width: 272px;
+    padding: 17px 10px 10px 10px;
+    background-color: #fff;
+    border: 2px solid #000;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    overflow-y: hidden;
+    overflow-x: hidden;
+    height: 338px;
+
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.containerDevil2 {
+    position: relative;
+    width: 248px;
+    margin: 0 auto;
+    padding:10px 0px 10px 10px;
+    background-color: #fff;
+    border: 2px solid #000;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+    overflow-x: hidden;
+height: 274px;
+top: 14px;
+
+
+}
+
+
+.containerDevil3 {
+   
+    top: 157px;
+    left: 50%;
+    border-radius: 10px;
+    /* background: red; */
+    width: 263px;
+    transform: translateX(-50%);
+    height: 170px;
+    pointer-events: none;
+    transition: box-shadow 0.3s ease;
+}
+
+.containerDevil3.shadow-bottom {
+    position: absolute;
+    box-shadow: inset 0 -18px 10px rgba(0, 0, 0, 0.7);
+}
+
+.headerDevil {
+    text-align: center;
+    margin-bottom: 3px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.gridDevil {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 3px;
+}
+
+.cellDevil {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    border: 2px solid #000;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    font-size: 18px;
+}
+
+/* .buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+} */
+
+#addCellBtnDevil {
+    border-radius: 5px;
+    right: 14px;
+    top: 16px;
+    height: 25px;
+    position: absolute;
+    padding: 0px 7px;
+    font-size: 14px;
+    line-height: 24px;
+    cursor: pointer;
+}
+
+#categorySelectDevil {
+    position: absolute;
+    width: 85px;
+    border-radius: 5px;
+    padding: 5px;
+    top: 15px;
+    font-size: 13px !important;
+    margin-bottom: 10px;
+}
