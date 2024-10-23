@@ -1,0 +1,399 @@
+.health-bar {
+    border-radius: 10px;
+    border: 1px solid #000;
+    width: 94%;
+    overflow: hidden;
+    position: absolute;
+    font-size: 15px;
+    height: 29%;
+    color: black;
+    font-weight: bold;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.health-bar p {
+    position: absolute;
+    /* Đặt văn bản nằm trong thanh máu */
+    width: 100%;
+    text-align: center;
+    /* Căn giữa ngang */
+    top: 50%;
+    transform: translateY(-50%);
+    /* Căn giữa dọc */
+    margin: 0;
+    /* Bỏ margin mặc định của <p> */
+    /* font-weight: bold; */
+    z-index: 1;
+    /* Đảm bảo văn bản luôn hiển thị trên thanh máu */
+}
+
+.health {
+    border: 1px solid #0000009c;
+    border-radius: 10px;
+    background-color: #f00a0a;
+    height: 100%;
+    width: 100%;
+    /* Ban đầu, thanh máu sẽ đầy */
+    position: absolute;
+    /* Để thanh máu bên dưới văn bản */
+    top: 0;
+    left: 0;
+    transition: width 0.7s ease;
+    z-index: 0;
+    /* Thanh máu nằm bên dưới */
+}
+
+.mana-bar {
+    background-color: #7070c5;
+    border-radius: 10px;
+    border: 1px solid #000;
+    width: 94%;
+    overflow: hidden;
+    position: absolute;
+    font-size: 15px;
+    height: 29%;
+    color: black;
+    top: 68%;
+    font-weight: bold;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.mana-bar p {
+    position: absolute;
+    /* Đặt văn bản nằm trong thanh mana */
+    width: 100%;
+    text-align: center;
+    /* Căn giữa ngang */
+    top: 50%;
+    background: #00000038;
+    color: white;
+    transform: translateY(-50%);
+    /* Căn giữa dọc */
+    margin: 0;
+    /* Xóa margin mặc định của <p> */
+    z-index: 1;
+    /* Đảm bảo văn bản luôn nằm trên thanh mana */
+}
+
+.mana {
+    transition: width 0.7s ease;
+    border: 1px solid #000;
+    border-radius: 10px;
+    background-color: blue;
+    /* Màu xanh cho thanh mana */
+    height: 100%;
+    width: 0%;
+    /* Thanh mana hiện tại là 0% vì chỉ số hiện tại là 0 */
+    position: absolute;
+    /* Để thanh mana nằm bên dưới văn bản */
+    top: 0;
+    left: 0;
+    z-index: 0;
+    /* Thanh mana nằm bên dưới văn bản */
+}
+
+
+/* new */
+.rectangleSkill{
+   width: 47px;
+height: 16px;
+background-color: #ccc;
+display: flex;
+align-items: center;
+/* padding-left: 1px; */
+position: absolute;
+bottom: -32%;
+}
+
+.circleMe {
+width: 10px;
+border: 1px solid #000;
+height: 10px;
+background-color: gray;
+border-radius: 50%;
+margin-left: 4px;
+}
+
+@keyframes slowUpAndDown {
+0%, 100% {
+transform: translateY(0); /* Vị trí ban đầu */
+}
+50% {
+transform: translateY(-2px); /* Di chuyển lên 5px */
+}
+}
+.shadow {
+box-shadow: 0 0 10px red;
+}
+
+.flyBtn{
+background: #af49f7;
+box-shadow: 0 0 10px #002eff;
+/* color: #000000; */
+animation: slowUpAndDown 1.3s ease-in-out infinite;
+}
+.inGameBattle {
+   position: absolute;
+   width: 100%;
+   height: 100%;
+   background: rebeccapurple;
+}
+
+#board {
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   width: 200px;
+   height: 200px;
+   background-color: rgb(173,216,230);
+   border: 7px solid black;
+   border-radius: 11px;
+   overflow: hidden;
+}
+#board img {
+/* width: calc(100% / 8); 
+height: calc(100% / 8);  */
+padding: 0px;
+margin: 0px ;
+position: absolute;
+
+transition: box-shadow 0.3s ease-in-out;
+transition: opacity 0.3s ease-in-out;
+
+
+}
+
+.blink {
+animation: blink 0.5s infinite; /* Chớp nháy liên tục */
+}
+
+@keyframes blink {
+0% {
+opacity: 1; /* Ảnh hiện rõ */
+}
+50% {
+opacity: 0; /* Ảnh biến mất */
+}
+100% {
+opacity: 1; /* Ảnh hiện lại */
+}
+}
+fade-out2 {
+opacity: 0; /* Mờ dần */
+}
+
+fade-in2 {
+opacity: 1; /* Hiện ảnh mới */
+}
+/* Hiệu ứng focus */
+.focus {
+border-radius: 3px;
+position: absolute;
+animation: pulsate 1.5s infinite;
+box-shadow: 0 0 0 5px rgba(20, 132, 47, 1); /* Shadow màu xanh */
+z-index: 2;
+}
+
+@keyframes pulsate {
+0% {
+box-shadow: 0 0 0 5px rgba(20, 132, 47, 1); /* Tăng độ mờ lên 0.7 */
+}
+50% {
+box-shadow: 0 0 0 7px rgba(20, 132, 47, 1); /* Tăng độ mờ lên 0.5 */
+}
+100% {
+box-shadow: 0 0 0 4px rgba(20, 132, 47, 1); /* Tăng độ mờ lên 0.7 */
+}
+}
+
+/* Hiệu ứng outFocus */
+.outFocus {
+position: absolute;
+border-radius: 3px;
+animation: outPulsate 1.2s forwards; /* Animation cho outFocus */
+box-shadow: 0 0 0 5px rgba(235, 8, 8, 1); /* Shadow màu đỏ */
+z-index: 2;
+}
+
+@keyframes outPulsate {
+0% {
+box-shadow: 0 0 0 5px rgba(235, 8, 8, 1); /* Shadow ban đầu */
+}
+50% {
+box-shadow: 0 0 0 7px rgba(235, 8, 8, 0.6); /* Mờ dần */
+}
+100% {
+box-shadow: 0 0 0 2px rgba(235, 8, 8, 0.3); /* Không còn shadow */
+}
+}
+
+
+.top-buttons {
+   position: absolute;
+   top: 10px;
+   width: 100%;
+   display: flex;
+   justify-content: space-between;
+   padding: 0 20px;
+}
+
+.rectangle {
+   width: 100px;
+   height: 40px;
+   background-color: #333;
+   color: white;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   cursor: pointer;
+}
+
+.timeBox {
+   position: absolute;
+top: 10px;
+text-align: center;
+left: 50%;
+display: flex;
+justify-content: center;
+align-items: center;
+transform: translateX(-50%);
+width: 40px;
+border-radius: 11px;
+height: 40px;
+font-size: 20px;
+background-color: red;
+}
+
+.modal, .exit-dialog {
+   display: none;
+   position: absolute;
+   width: 100%;
+   height: 100%;
+   background-color: rgba(0, 0, 0, 0.8);
+   z-index: 2;
+   justify-content: center;
+   align-items: center;
+}
+
+.modal-content, .dialog-content {
+   background-color: white;
+   padding: 20px;
+   border-radius: 10px;
+   text-align: center;
+   position: absolute;
+}
+
+.close-btn {
+   position: absolute;
+   top: 10px;
+   right: 10px;
+   font-size: 20px;
+   cursor: pointer;
+}
+
+.skills {
+   display: flex;
+   justify-content: space-between;
+   margin-top: 20px;
+}
+
+.skill-box {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+}
+
+.square {
+   width: 60px;
+   height: 60px;
+   background-color: #333;
+   border: 1px solid #000;
+}
+
+.skill-name {
+   margin-top: 10px;
+   /* color: white; */
+}
+
+
+.bottom-container {
+   position: absolute;
+   bottom: 10px;
+   flex-direction: row-reverse;
+   width: 100%;
+   display: flex;
+   justify-content: space-between;
+   padding: 0 20px;
+}
+
+.bottom-block {
+   display: flex;
+   width: 100%;
+   flex-direction: column;
+   align-items: center;
+}
+
+.boxMeIn_Game, .boxMonIn_Game {
+   width: 39%;
+padding: 0px 4px;
+position: absolute;
+height: 106%;
+bottom: 165%;
+color: white;
+background-color: #333;
+}
+
+.bottom-square {
+   width: 50px;
+   height: 50px;
+   background-color: red;
+}
+
+
+/* new 2 */
+/* Hình động để chỉ trạng thái đang chờ */
+.spinner {
+border: 8px solid #f3f3f3; /* Màu nền */
+border-top: 8px solid #3498db; /* Màu cho vòng tròn */
+border-radius: 50%;
+width: 50px;
+height: 50px;
+animation: spin 1s linear infinite;
+position: absolute;
+top: 50%;
+left: 43%;
+transform: translate(-50%, -50%);
+opacity: 0;
+transition: opacity 1s ease-in-out;
+z-index: 51;
+}
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+/* Lớp phủ đen */
+.overlay {
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: black;
+opacity: 0;
+transition: opacity 1s ease-in-out;
+z-index: 1;
+visibility: hidden;
+}
+/* Hiệu ứng fade in/out cho lớp phủ đen */
+.fade-in {
+opacity: 1;
+visibility: visible;
+}
+.fade-out {
+opacity: 0;
+visibility: hidden;
+transition: opacity 1s ease-in-out, visibility 0s 1s; 
+}

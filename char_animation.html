@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS Image Animation</title>
+    <style>
+        .animated-div {
+            position: relative;
+
+            width: 300px;
+            height: 300px;
+            background-size: cover;
+            background-position: center;
+            border: 1px solid #000;
+            transition: transform 0.3s ease; /* Tạo hiệu ứng quay */
+        }
+        #animated-div1 {
+            position: absolute;
+            top: -1px;
+            left:-1px;
+        }
+
+        /* Thêm CSS cho các nút */
+        button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-div" id="animatedDiv">
+        <div class="animated-div" id="animatedDiv1"></div>
+    </div>
+
+    <!-- Các nút điều khiển -->
+    <button id="goButton">Go Animation</button>
+    <button id="stopButton">Stop Animation</button>
+    <button id="reverseButton">Reverse Animation</button>
+
+    <script>
+const go_boy_border_0 = [
+    'ảnh/Boy_goc_0.png',
+    'ảnh/Boy_di_0.png'
+];
+const stop_boy_border_0 = [
+    'ảnh/Boy_goc_0.png',
+  
+    'ảnh/Boy_nhun_0.png'
+];
+
+const go_boy_skin_0 = [
+    'ảnh/Boy_goc_1.png',
+    'ảnh/Boy_di_1.png'
+];
+const stop_boy__skin_1 = [
+    'ảnh/Boy_goc_1.png',
+  
+    'ảnh/Boy_nhun_1.png'
+];
+// -------------------
+
+const go_girl_border_0 = [
+    'ảnh/Girl_goc_0.png',
+    'ảnh/Girl_di_0.png'
+];
+const stop_girl_border_0 = [
+    'ảnh/Girl_goc_0.png',
+  
+    'ảnh/Girl_nhun_0.png'
+];
+
+const go_girl_skin_1 = [
+    'ảnh/Girl_goc_1.png',
+    'ảnh/Girl_di_1.png'
+];
+const stop_girl__skin_1 = [
+    'ảnh/Girl_goc_1.png',
+  
+    'ảnh/Girl_nhun_1.png'
+];
+
+let images = stop; // Ban đầu là mảng 'stop'
+let images1 = stop1; // Ban đầu là mảng 'stop'
+let index = 0;
+let intervalId = null;
+let isReversed = false; // Biến để kiểm tra có quay ngược hay không
+
+function changeImage() {
+    const div = document.getElementById('animatedDiv1');
+    const div1 = document.getElementById('animatedDiv');
+    div.style.backgroundImage = `url(${images[index]})`;
+    div1.style.backgroundImage = `url(${images1[index]})`;
+    index = (index + 1) % images.length; // Quay vòng lại từ đầu khi hết mảng
+   
+}
+
+function startAnimation(imageArray, imageArray1) {
+    images = imageArray;
+    images1 = imageArray1;
+    index = 0;
+    if (intervalId) clearInterval(intervalId); // Dừng hoạt ảnh hiện tại nếu có
+    intervalId = setInterval(changeImage, 400); // Thiết lập hoạt ảnh mới
+}
+
+document.getElementById('goButton').addEventListener('click', () => {
+    startAnimation(go, go1); // Bắt đầu hoạt ảnh của mảng 'go'
+});
+
+document.getElementById('stopButton').addEventListener('click', () => {
+    startAnimation(stop, stop1); // Bắt đầu hoạt ảnh của mảng 'stop'
+});
+
+document.getElementById('reverseButton').addEventListener('click', () => {
+    const div = document.getElementById('animatedDiv');
+    isReversed = !isReversed;
+    div.style.transform = isReversed ? 'scaleX(-1)' : 'scaleX(1)'; // Quay ngược khi nhấn nút
+});
+
+// Bắt đầu hoạt ảnh 'stop' mặc định khi tải trang
+startAnimation(stop, stop1);
+
+    </script>
+</body>
+</html>
