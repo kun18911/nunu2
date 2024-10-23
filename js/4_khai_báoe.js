@@ -86,19 +86,7 @@ function startGame() {
         tile.style.padding = '0px';
         tile.style.margin = '0px';
         return tile;
-    }
-    // function createTile(r, c, row) {
-    //     tile.src = randomCandy(); 
-    //     tile.style.opacity = "1"; tile.classList.add("fc", 'offBoom');
-    //     tile.addEventListener("click", click_Curr); 
-    //     board_table.appendChild(tileDad).appendChild(tile);
-    //     tile.id = `${r}${c}`; tileDad.id = `a${r}${c}`; row.push(tile); 
-
-    //     Object.assign(tileDad.style, {top:`${nammuoi * r}rem`,left: `${nammuoi * c}rem`, 
-    //     position: "absolute"});  tileDad.dataset.symbolTop =`${nammuoi*r}rem`;return tile
-    // }
-    
-    
+    }    
 
     function createE(b) {
         // --------------- tạo thẻ cha, ảnh 1, ảnh 2
@@ -197,7 +185,7 @@ function dragEnd() {
     }
 } // 1cau lệnh thì bỏ ngoặc !!1
 var getPoint = new Set()
-function readycrush() {
+function readycrush(x) {
     for (let r = 0; r < hàng; r++) {meme(cột, board[r])} // Kiểm tra hàng
     for (let c = 0; c < cột; c++) {meme(hàng, board.map(row => row[c]))} // Kiểm tra cột
 
@@ -215,6 +203,7 @@ function readycrush() {
         }
         if (array.length >= 3) listOfArrays.push(array);
     }
+    if (x != undefined) return listOfArrays
     if (listOfArrays.length == 0) {click1 = true; endTurn(); return}
     // --------------------------------
     let vienKeoGiaoNhau = new Set(), mangLonHonBon = []
@@ -227,13 +216,6 @@ function readycrush() {
             giaoNhau.forEach(candy => vienKeoGiaoNhau.add(candy));
         }
     }
-    // for (let i = 0; i < listOfArrays.length; i++) {
-    //     for (let j = i + 1; j < listOfArrays.length; j++) {
-    //         let giaoNhau = listOfArrays[i].filter(candy => listOfArrays[j].includes(candy));
-    //         giaoNhau.forEach(candy => vienKeoGiaoNhau.add(candy));
-    //         // [1,2,3].filter(candy => [5,3].includes(candy))  ; [3]
-    //     }
-    // }; 
     let mangVienKeoGiaoNhau = [...vienKeoGiaoNhau] //Array.from(vienKeoGiaoNhau);
     var tTurns3x = mangVienKeoGiaoNhau.length
     mangVienKeoGiaoNhau.forEach(tile => changeSrc(tile, 3));
@@ -252,25 +234,8 @@ function readycrush() {
         }
     });
     if (startG != 0) tTurns += tTurns3x + [...tTurns4x].length
-    //-------------------
-    // tinh điểm
-    // var getPoint = new Set()
-    // listOfArrays.forEach(arrayDad => {
-    //     arrayDad.forEach(child => {
-    //         if (getPoint.has(child)) {
 
-    //         } else {
-    //             getPoint.add(child);
-    //             if (meTurn==true){
-    //                 getPoint2Turn(1, child.src)
-    //             } else if (monTurn == true) {
-    //                 getPoint2Turn(2, child.src)
-    //             }
-    //         }
-    //     })
-    // })
-
-    // --------
+    // -----------------
     function checkBoom() {
     for (var i = 0; i < listOfArrays.length; i++) {
         var hi = listOfArrays[i].some(item =>item.dataset.symbolClass != 'undefined')
@@ -436,7 +401,7 @@ function changeSrc(tile, type) {  var src = tile.src
     objectSrc2.push({tile: tile, suffix: suffix, src: src})
 }
 
-function changeImg2(curr, other) {
+function changeFilter(curr, other) {
     const currPic2 = havePic2(curr); const otherPic2 = havePic2(other)
     function havePic2(box) {
         return document.getElementById("a" + 
@@ -518,7 +483,7 @@ function haha(cot) {
             for (let i = 0; i < arrayAnd_Blank.length - 1; i++) {
                 function mi(a) { return arrayAnd_Blank[a].querySelector('img:first-of-type') }
                 mi(i).dataset.symbolClass = mi(i+1).dataset.symbolClass
-                mi(i).src = mi(i + 1).src; changeImg2(mi(i), mi(i + 1)); deleteImg2(mi(i + 1));
+                mi(i).src = mi(i + 1).src; changeFilter(mi(i), mi(i + 1)); deleteImg2(mi(i + 1));
             } 
             
             arrayAfterBlank.forEach(el => {
@@ -561,7 +526,7 @@ const srcToSrc= (img1, img2) => {
         [img1.src, img2.src] = [img2.src, img1.src]; // 1. đổi src img cho nhau
         img1.style.opacity = 1; img2.style.opacity = 1; // Hiện 2 hình ảnh
         [currTile.dataset.symbolClass, otherTile.dataset.symbolClass] = [otherTile.dataset.symbolClass, currTile.dataset.symbolClass];
-        click1 = undefined; changeImg2(currTile,otherTile); //đổi ảnh Filter cho nhau
+        click1 = undefined; changeFilter(currTile,otherTile); //đổi ảnh Filter cho nhau
     }, 300); // Thời gian tương tự như trong transition
 };
 var arrayNameCandy = ['yingyang', "heart", "water", "sword"]
